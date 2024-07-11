@@ -3,8 +3,8 @@ import './App.css'
 import { supabase } from '@/supabaseClient';
 import { Session } from '@supabase/supabase-js';
 import { LoginForm } from '@/components/login/LoginForm'
-import Layout from './components/Layout';
-
+import Layout from '@/components/Layout'
+import SystemRoutes from './components/SystemRoutes';
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -25,10 +25,12 @@ function App() {
   else {
     return (
       <Layout>
+        <SystemRoutes />
          <button onClick={() => supabase.auth.signOut()}>Sign out</button>
       </Layout>
     )
   }
 }
 
-export default App
+
+export default App;
