@@ -1,19 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
 import './App.css'
+import { supabase } from '@/supabaseClient';
+import { Session } from '@supabase/supabase-js';
+import { LoginForm } from '@/components/login/LoginForm'
 import Layout from './components/Layout';
 
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [session, setSession] = useState<Session | null>(null);
 
-  return (
-    <Layout>
-      <h1 className="text-4xl font-bold">Welcome to the Admin Panel</h1>
-      <p className="mt-4">This is the main content area.</p>
-    </Layout>
-  )
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  if (!session) {
+    return <LoginForm />
+  }
+  else {
+    return (
+      <Layout>
+         <button onClick={() => supabase.auth.signOut()}>Sign out</button>
+      </Layout>
+    )
+  }
 }
 
 export default App
