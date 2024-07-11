@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Sidebar: React.FC = () => {
     return (
@@ -8,9 +9,15 @@ const Sidebar: React.FC = () => {
         </div>
         <nav className="flex-1">
           <ul>
-            <li className="p-4 hover:bg-gray-700">Dashboard</li>
-            <li className="p-4 hover:bg-gray-700">Users</li>
-            <li className="p-4 hover:bg-gray-700">Settings</li>
+          <li className="p-4 hover:bg-gray-700">
+            <Link to="/">Dashboard</Link>
+          </li>
+          <li className="p-4 hover:bg-gray-700">
+            <Link to="/users">Users</Link>
+          </li>
+          <li className="p-4 hover:bg-gray-700">
+            <Link to="/settings">Configuración</Link>
+          </li>
           </ul>
         </nav>
       </div>
