@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaUsers, FaUserTag, FaBoxOpen, FaTruck } from 'react-icons/fa';
+import { FaUsers, FaBoxOpen, FaTruck } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const Settings: React.FC = () => {
