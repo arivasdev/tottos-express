@@ -1,19 +1,26 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
+import Settings from './pages/Settings';
+import Home from './pages/Home';
+// import Users from './pages/settings/Users';
+// import Roles from './pages/settings/Roles';
+// import Categories from './pages/settings/Categories';
+// import DeliveryMethods from './pages/settings/DeliveryMethods';
 
-
-function App() {
-  const [count, setCount] = useState(0)
-
+const App: React.FC = () => {
   return (
     <Layout>
-      <h1 className="text-4xl font-bold">Welcome to the Admin Panel</h1>
-      <p className="mt-4">This is the main content area.</p>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/settings" element={<Settings />} />
+        {/* <Route path="/settings/users" element={<Users />} />
+        <Route path="/settings/roles" element={<Roles />} />
+        <Route path="/settings/categories" element={<Categories />} />
+        <Route path="/settings/delivery-methods" element={<DeliveryMethods />} /> */}
+      </Routes>
     </Layout>
-  )
-}
+  );
+};
 
-export default App
+export default App;
