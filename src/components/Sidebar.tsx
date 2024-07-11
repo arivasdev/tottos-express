@@ -27,10 +27,7 @@ const Sidebar: React.FC = () => {
                             }`}
                     >
                         <li className="p-2 hover:bg-gray-700">
-                            <Link to="/settings/users">Usuarios</Link>
-                        </li>
-                        <li className="p-2 hover:bg-gray-700">
-                            <Link to="/settings/roles">Asignación de Roles</Link>
+                            <Link to="/settings/users">Usuarios y Permisos</Link>
                         </li>
                         <li className="p-2 hover:bg-gray-700">
                             <Link to="/settings/categories">Categorías de Productos</Link>
