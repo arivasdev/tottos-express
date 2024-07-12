@@ -27,7 +27,7 @@ const Sidebar: React.FC = () => {
                             <Link to="/settings/users">Usuarios y Permisos</Link>
                         </li>
                         <li className="p-2 hover:bg-gray-700">
-                            <Link to="/settings/categories">Categorías de Productos</Link>
+                            <Link to="/categories/categories">Categorías de Productos</Link>
                         </li>
                         <li className="p-2 hover:bg-gray-700">
                             <Link to="/settings/delivery-routes">Rutas de Entrega</Link>

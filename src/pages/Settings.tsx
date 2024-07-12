@@ -14,11 +14,13 @@ const Settings: React.FC = () => {
                         <p className="text-gray-600">Gestiona los usuarios de la plataforma junto a sus roles y permisos.</p>
                     </div>
                 </Link>
-                <div className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center text-center">
-                    <FaBoxOpen className="text-4xl text-yellow-500 mb-4" />
-                    <h2 className="text-xl font-bold mb-2">Categorías de Productos</h2>
-                    <p className="text-gray-600">Configura las categorías de productos.</p>
-                </div>
+                <Link to="/categories/categories">
+                    <div className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center text-center">
+                        <FaBoxOpen className="text-4xl text-yellow-500 mb-4" />
+                        <h2 className="text-xl font-bold mb-2">Categorías de Productos</h2>
+                        <p className="text-gray-600">Configura las categorías de productos.</p>
+                    </div>
+                </Link>
                 <Link to="/settings/delivery-routes">
                     <div className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center text-center">
                         <FaTruck className="text-4xl text-red-500 mb-4" />
