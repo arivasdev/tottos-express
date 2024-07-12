@@ -1,0 +1,10 @@
+.dot {
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+}
+
+#toggleCobroPorPeso:checked + label .dot {
+  transform: translateX(100%);
+  color: #38a169; 
+}

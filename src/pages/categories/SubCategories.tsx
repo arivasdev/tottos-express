@@ -72,26 +72,28 @@ const SubCategories: React.FC<Props> = ({ categoryId }) => {
           className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
         />
       </div>
-      <div className="grid grid-cols-1 gap-4">
-        {subCategories
-          .filter((subCategory) => (showActiveOnly ? subCategory.isActive : true))
-          .map((subCategory) => (
-            <div key={subCategory.id} className="bg-white shadow-md rounded-lg p-4">
-              <h3 className="text-lg font-bold">{subCategory.name}</h3>
-              <p>ID: {subCategory.id}</p>
-              <p>Tarifa: ${subCategory.tarifa}</p>
-              <p>Cobro por Peso: {subCategory.isCobroPorPeso ? 'Sí' : 'No'}</p>
-              <p>Estado: {subCategory.isActive ? 'Activo' : 'Inactivo'}</p>
-              <button
-                onClick={() => toggleSubCategoryStatus(subCategory.id)}
-                className={`mt-2 px-4 py-2 rounded ${
-                  subCategory.isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
-                } text-white`}
-              >
-                {subCategory.isActive ? 'Desactivar' : 'Activar'}
-              </button>
-            </div>
-          ))}
+      <div className="h-96 overflow-y-auto">
+        <div className="grid grid-cols-1 gap-4">
+          {subCategories
+            .filter((subCategory) => (showActiveOnly ? subCategory.isActive : true))
+            .map((subCategory) => (
+              <div key={subCategory.id} className="bg-white shadow-md rounded-lg p-4">
+                <h3 className="text-lg font-bold">{subCategory.name}</h3>
+                <p>ID: {subCategory.id}</p>
+                <p>Tarifa: ${subCategory.tarifa}</p>
+                <p>Cobro por Peso: {subCategory.isCobroPorPeso ? 'Sí' : 'No'}</p>
+                <p>Estado: {subCategory.isActive ? 'Activo' : 'Inactivo'}</p>
+                <button
+                  onClick={() => toggleSubCategoryStatus(subCategory.id)}
+                  className={`mt-2 px-4 py-2 rounded ${
+                    subCategory.isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
+                  } text-white`}
+                >
+                  {subCategory.isActive ? 'Desactivar' : 'Activar'}
+                </button>
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );
