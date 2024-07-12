@@ -19,11 +19,13 @@ const Settings: React.FC = () => {
                     <h2 className="text-xl font-bold mb-2">Categorías de Productos</h2>
                     <p className="text-gray-600">Configura las categorías de productos.</p>
                 </div>
-                <div className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center text-center">
-                    <FaTruck className="text-4xl text-red-500 mb-4" />
-                    <h2 className="text-xl font-bold mb-2">Métodos de Entrega</h2>
-                    <p className="text-gray-600">Gestiona los métodos de entrega disponibles.</p>
-                </div>
+                <Link to="/settings/delivery-routes">
+                    <div className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center text-center">
+                        <FaTruck className="text-4xl text-red-500 mb-4" />
+                        <h2 className="text-xl font-bold mb-2">Rutas de Entrega</h2>
+                        <p className="text-gray-600">Gestiona las rutas de entrega disponibles en cada país.</p>
+                    </div>
+                </Link>
             </div>
         </div>
     );
