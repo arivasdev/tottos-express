@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {supabase} from '../../supabaseClient';
 import CategoryForm from './CategoryForm';
 import SubCategories from './SubCategories';
+import Modal from '@/components/Modal';
 
 interface Category {
   id: string;
@@ -14,6 +15,15 @@ const Categories: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showActiveOnly, setShowActiveOnly] = useState(true);
 
+  const [isCategoryModalOpen, setCategoryModalOpen] = useState(false);
+
+  const openCategoryModal = () => {
+    setCategoryModalOpen(true);
+  };
+  
+  const closeCategoryModal = () => {
+    setCategoryModalOpen(false);
+  };
   useEffect(() => {
     const fetchCategories = async () => {
       const { data, error } = await supabase.from<Category>('Categories').select('*');
@@ -52,7 +62,16 @@ const Categories: React.FC = () => {
     <div className="flex p-6">
       <div className="w-1/2 pr-4">
         <h1 className="text-2xl font-bold mb-4">Categorías</h1>
-        <CategoryForm setCategories={setCategories} />
+        <button
+        onClick={openCategoryModal}
+        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+      >
+        Agregar Categoría
+      </button>
+
+      <Modal isOpen={isCategoryModalOpen} onClose={closeCategoryModal}>
+        <CategoryForm onClose={closeCategoryModal} setCategories={setCategories} />
+      </Modal>
         <div className="mb-4 mt-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">Mostrar Solo Activas</label>
           <input
