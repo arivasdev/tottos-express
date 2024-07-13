@@ -4,16 +4,16 @@ import ClientForm from './ClientForm';
 import EditClientModal from './EditClientModal';
 import Modal from '@/components/Modal';
 import { DataTable } from "@/components/DataTable";
-import { MoreHorizontal } from "lucide-react"
+import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 
 import { Button } from "@/components/ui/Button"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu"
 
 import {
@@ -43,7 +43,17 @@ const Clients: React.FC = () => {
     const columns: ColumnDef<Client>[] = [
         {
             accessorKey: "name",
-            header: () => <div className="text-left">Nombre</div>,
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Nombre
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                )
+            },
             /*SERVIRÁ PARA FORMATEAR VALORES
             cell: ({ row }) => {
                 const amount = parseFloat(row.getValue("amount"))
@@ -57,7 +67,17 @@ const Clients: React.FC = () => {
         },
         {
             accessorKey: "email",
-            header: "Email",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Email
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                )
+            },
         },
         {
             accessorKey: "phone_number",
@@ -65,51 +85,68 @@ const Clients: React.FC = () => {
         },
         {
             accessorKey: "metodo_preferido",
-            header: "Pref. Entrega",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Pref. Entrega
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                )
+            },
         },
         {
             id: "actions",
             cell: ({ row }) => {
-            let client = row.original;
-         
-              return (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <span className="sr-only">Abrir menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className='rounded-md border bg-white shadow-md' align="end">
-                    <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                    <DropdownMenuItem className='hover:bg-gray-200'
-                      onClick={() => handleEditClick(client)}
-                    >
-                      Editar
-                    </DropdownMenuItem>
-                    
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className='hover:bg-gray-200'
-                      onClick={() => navigator.clipboard.writeText(payment.id)}
-                    >
-                      Ver Direcciones
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className='hover:bg-gray-200'
-                      onClick={() => navigator.clipboard.writeText(payment.id)}
-                    >
-                      Ver Pedidos
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )
+                let client = row.original;
+
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Abrir menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className='rounded-md border bg-white shadow-md' align="end">
+                            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                            <DropdownMenuItem className='hover:bg-gray-200'
+                                onClick={() => handleEditClick(client)}
+                            >
+                                Editar
+                            </DropdownMenuItem>
+
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className='hover:bg-gray-200'
+                                onClick={() => navigator.clipboard.writeText(payment.id)}
+                            >
+                                Ver Direcciones
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className='hover:bg-gray-200'
+                                onClick={() => navigator.clipboard.writeText(payment.id)}
+                            >
+                                Ver Pedidos
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )
             },
-          },
+        },
     ]
 
     const [clients, setClients] = useState<Client[]>([]);
     const [selectedClient, setSelectedClient] = useState<Client | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isClientModalOpen, setClientModalOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const filteredData = clients.filter(row =>
+        row.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.metodo_preferido.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     const openClientModal = () => {
         setClientModalOpen(true);
@@ -157,15 +194,22 @@ const Clients: React.FC = () => {
             </Modal>
 
             <div className="container mx-auto py-10">
-                <DataTable columns={columns} data={clients} />
+                <input
+                    type="text"
+                    placeholder="Buscar..."
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded mb-4"
+                />
+                <DataTable columns={columns} data={filteredData} />
             </div>
             {isEditModalOpen && selectedClient && (
                 <EditClientModal client={selectedClient} onClose={handleModalClose} />
             )}
-            {}
+            { }
         </div>
 
-        
+
     );
 };
 
