@@ -16,15 +16,8 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu"
 
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/Table";
+import { Badge } from "@/components/ui/badge"
+
 
 import { ColumnDef } from "@tanstack/react-table"
 
@@ -96,6 +89,11 @@ const Clients: React.FC = () => {
                     </Button>
                 )
             },
+            cell: ({ row }) => {
+                const metodo = row.getValue("metodo_preferido")
+           
+                return <Badge className={metodo == "Retiro en Sitio"? "bg-teal-300" : "bg-yellow-200"} variant="outline">{metodo}</Badge>
+              },
         },
         {
             id: "actions",
