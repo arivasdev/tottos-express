@@ -7,7 +7,7 @@ const Sidebar: React.FC = () => {
 
 
     return (
-        <div className="bg-gray-800 text-white w-64 h-full flex flex-col">
+        <div className="bg-gray-800 text-white w-50 h-full flex flex-col">
             <div className="p-4">
                 <h1 className="text-2xl font-bold">Admin Panel</h1>
             </div>
@@ -27,7 +27,7 @@ const Sidebar: React.FC = () => {
                             <Link to="/settings/users">Usuarios y Permisos</Link>
                         </li>
                         <li className="p-2 hover:bg-gray-700">
-                            <Link to="/settings/categories">Categorías de Productos</Link>
+                            <Link to="/categories/categories">Categorías de Productos</Link>
                         </li>
                         <li className="p-2 hover:bg-gray-700">
                             <Link to="/settings/delivery-routes">Rutas de Entrega</Link>
