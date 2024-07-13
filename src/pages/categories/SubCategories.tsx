@@ -27,6 +27,7 @@ const SubCategories: React.FC<Props> = ({ categoryId }) => {
     const [category, setCategory] = useState<Category>();
     const [showActiveOnly, setShowActiveOnly] = useState(true);
     const [isSubCategoryModalOpen, setSubCategoryModalOpen] = useState(false);
+    const [selectedSubCategory, setSelectedSubCategory] = useState<SubCategory|null>(null);
 
     useEffect(() => {
         const fetchSubCategories = async () => {
@@ -82,6 +83,16 @@ const SubCategories: React.FC<Props> = ({ categoryId }) => {
 
 
 
+    const agregar = () => {
+        setSelectedSubCategory(null);
+        openSubCategoryModal();
+    };
+
+    const editar = (subCat: SubCategory) => {
+        setSelectedSubCategory(subCat);
+        openSubCategoryModal();
+    };
+
     const openSubCategoryModal = () => {
         setSubCategoryModalOpen(true);
     };
@@ -93,14 +104,14 @@ const SubCategories: React.FC<Props> = ({ categoryId }) => {
         <div className="">
             <h2 className="text-xl font-bold mb-4">Subcategorías de: {category?.name}</h2>
             <button
-                onClick={openSubCategoryModal}
+                onClick={agregar}
                 className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:bg-green-600"
             >
                 Agregar Subcategoría
             </button>
             <Modal isOpen={isSubCategoryModalOpen} onClose={closeSubCategoryModal}>
 
-                <SubCategoryForm onClose={closeSubCategoryModal} categoryId={categoryId} setSubCategories={setSubCategories} />
+                <SubCategoryForm subCategory={selectedSubCategory} onClose={closeSubCategoryModal} categoryId={categoryId} setSubCategories={setSubCategories} />
             </Modal>
             <div className="mb-4 mt-6 flex justify-start">
                 <input
@@ -127,13 +138,22 @@ const SubCategories: React.FC<Props> = ({ categoryId }) => {
                                     </div>
                                 </div>
 
-                                <button
-                                    onClick={() => toggleSubCategoryStatus(subCategory.id)}
-                                    className={`mt-2 px-4 py-2 rounded ${subCategory.isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
-                                        } text-white`}
-                                >
-                                    {subCategory.isActive ? 'Desactivar' : 'Activar'}
-                                </button>
+                                <div className="flex flex-col items-end justify-center">
+                                    <button
+                                        onClick={() => editar(subCategory)}
+                                        className={`mt-2 px-4 py-2 rounded outline outline-offset-2 outline-cyan-500 text-black`}
+                                    >
+                                        Editar
+                                    </button>
+                                    <button
+                                        onClick={() => toggleSubCategoryStatus(subCategory.id)}
+                                        className={`mt-2 px-4 py-2 rounded ${subCategory.isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
+                                            } text-white`}
+                                    >
+                                        {subCategory.isActive ? 'Desactivar' : 'Activar'}
+                                    </button>
+                                </div>
+
                             </div>
                         ))}
                 </div>

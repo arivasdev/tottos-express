@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient';
+import { PostgrestError } from '@supabase/supabase-js';
 
 interface SubCategoryFormProps {
     categoryId: string;
     onClose: () => void;
     setSubCategories: React.Dispatch<React.SetStateAction<SubCategory[]>>;
+    subCategory: SubCategory|null;
 }
 
-const SubCategoryForm: React.FC<SubCategoryFormProps> = ({ categoryId, onClose, setSubCategories }) => {
-    const [subCategoryName, setSubCategoryName] = useState('');
-    const [tarifa, setTarifa] = useState<string>('0.00');
+const SubCategoryForm: React.FC<SubCategoryFormProps> = ({ categoryId, onClose, setSubCategories, subCategory }) => {
+    const [subCategoryName, setSubCategoryName] = useState(subCategory?.name || '');
+    const [tarifa, setTarifa] = useState<string>(subCategory?.tarifa || '0.00');
     const [isCobroPorPeso, setIsCobroPorPeso] = useState(true);
 
     const handleTarifaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,19 +22,42 @@ const SubCategoryForm: React.FC<SubCategoryFormProps> = ({ categoryId, onClose, 
         }
     };
 
+    useEffect(() => {
+        if(subCategory){
+            setIsCobroPorPeso(subCategory?.isCobroPorPeso);
+        }
+    },[])
+
     const addSubCategory = async () => {
         const tarifaValue = parseFloat(tarifa);
         if (subCategoryName.trim() && tarifaValue >= 0) {
-            const { error } = await supabase.from('SubCategories').insert({
-                name: subCategoryName,
-                categoryId,
-                isCobroPorPeso,
-                tarifa: tarifaValue,
-                isActive: true,
-            });
+            let operationError : PostgrestError | null;
+            if(subCategory){
+                const { error } = await supabase.from('SubCategories').update({
+                    name: subCategoryName,
+                    categoryId,
+                    isCobroPorPeso,
+                    tarifa: tarifaValue,
+                    isActive: true,
+                })
+                .eq('id', subCategory.id)
+                ;
+                operationError = error;
+            }
+            else{
+                const { error } = await supabase.from('SubCategories').insert({
+                    name: subCategoryName,
+                    categoryId,
+                    isCobroPorPeso,
+                    tarifa: tarifaValue,
+                    isActive: true,
+                });
+                operationError = error;
+            }
+            
 
-            if (error) {
-                console.error('Error adding subcategory:', error);
+            if (operationError) {
+                console.error('Error saving subcategory:', operationError);
             } else {
                 setSubCategoryName('');
                 setTarifa('0.00');
@@ -89,7 +114,7 @@ const SubCategoryForm: React.FC<SubCategoryFormProps> = ({ categoryId, onClose, 
                 onClick={addSubCategory}
                 className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:bg-green-600"
             >
-                Agregar Subcategoría
+                { subCategory ? "Guardar Cambios" : "Agregar Subcategoría"}
             </button>
         </div>
     );

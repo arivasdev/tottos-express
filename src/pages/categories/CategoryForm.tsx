@@ -42,6 +42,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ onClose, setCategories }) =
       >
         Agregar Categoría
       </button>
+
     </div>
   );
 };
