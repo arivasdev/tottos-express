@@ -4,7 +4,16 @@
   transition: transform 0.2s;
 }
 
-#toggleCobroPorPeso:checked + label .dot {
+#toggleCobroPorPeso:checked+label .dot {
   transform: translateX(100%);
-  color: #38a169; 
+  color: #38a169;
+}
+
+.status {
+  width: 70px !important;
+  color: white;
+  font-size: x-small;
+  font-weight: bold;
+  border-radius: 9px;
+  text-align: center;
 }

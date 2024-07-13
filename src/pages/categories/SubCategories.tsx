@@ -90,7 +90,7 @@ const SubCategories: React.FC<Props> = ({ categoryId }) => {
         setSubCategoryModalOpen(false);
     }
     return (
-        <div>
+        <div className="">
             <h2 className="text-xl font-bold mb-4">Subcategorías de: {category?.name}</h2>
             <button
                 onClick={openSubCategoryModal}
@@ -102,26 +102,31 @@ const SubCategories: React.FC<Props> = ({ categoryId }) => {
 
                 <SubCategoryForm onClose={closeSubCategoryModal} categoryId={categoryId} setSubCategories={setSubCategories} />
             </Modal>
-            <div className="mb-4 mt-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Mostrar Solo Activas</label>
+            <div className="mb-4 mt-6 flex justify-start">
                 <input
                     type="checkbox"
                     checked={showActiveOnly}
                     onChange={() => setShowActiveOnly(!showActiveOnly)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-4 h-4 mr-2 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
+                <label className="block text-sm font-medium text-gray-700 mb-2">Mostrar Solo Activas</label>
             </div>
             <div className="h-96 overflow-y-auto">
                 <div className="grid grid-cols-1 gap-4">
                     {subCategories
                         .filter((subCategory) => (showActiveOnly ? subCategory.isActive : true))
                         .map((subCategory) => (
-                            <div key={subCategory.id} className="bg-white shadow-md rounded-lg p-4">
-                                <h3 className="text-lg font-bold">{subCategory.name}</h3>
-                                <p>ID: {subCategory.id}</p>
-                                <p>Tarifa: ${subCategory.tarifa}</p>
-                                <p>Cobro por Peso: {subCategory.isCobroPorPeso ? 'Sí' : 'No'}</p>
-                                <p>Estado: {subCategory.isActive ? 'Activo' : 'Inactivo'}</p>
+                            <div key={subCategory.id} className="bg-white flex justify-between shadow-md rounded-lg p-4">
+                                <div className='flex flex-col justify-evenly'>
+                                    <h3 className="text-lg font-bold">{subCategory.name}</h3>
+                                    <p>Tarifa: ${subCategory.tarifa}</p>
+                                    <p>Cobro por Peso: {subCategory.isCobroPorPeso ? 'Sí' : 'No'}</p>
+                                    <div className='flex'>
+
+                                        <p className={`status w-full ${subCategory.isActive ? ' bg-green-500' : ' bg-red-500'}`}>{subCategory.isActive ? 'Activo' : 'Inactivo'}</p>
+                                    </div>
+                                </div>
+
                                 <button
                                     onClick={() => toggleSubCategoryStatus(subCategory.id)}
                                     className={`mt-2 px-4 py-2 rounded ${subCategory.isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
