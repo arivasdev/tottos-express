@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Separator } from './ui/Separator';
+import { supabase } from '@/supabaseClient';
 
 const Sidebar: React.FC = () => {
     const [openOption, setOpenOption] = useState("");
@@ -17,7 +18,7 @@ const Sidebar: React.FC = () => {
                     <li onClick={() => setOpenOption("/")} className="p-4 hover:bg-gray-700">
                         <Link to="/">Inicio</Link>
                     </li>
-                    <Separator className="text-white"/>
+                    <Separator className="text-white" />
                     <li className="p-4 hover:bg-gray-700 cursor-pointer" onClick={() => { setOpenOption("/settings") }}>
                         <Link to="/settings">Configuración</Link>
                     </li>
@@ -35,8 +36,12 @@ const Sidebar: React.FC = () => {
                             <Link to="/settings/delivery-routes">Rutas de Entrega</Link>
                         </li>
                     </div>
+
                 </ul>
             </nav>
+            <div className="p-4 hover:bg-gray-700">
+                <button onClick={() => supabase.auth.signOut()}>Cerrar Sesión</button>
+            </div>
         </div>
     );
 };
