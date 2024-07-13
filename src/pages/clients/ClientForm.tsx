@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/supabaseClient';
+import { useToast } from '@/components/ui/use-toast';
 
 interface Props {
-  onClientAdded: () => void;
+  onClientAdded: () => void;  
+  onClose: () => void;
 }
 
-const ClientForm: React.FC<Props> = ({ onClientAdded }) => {
+const ClientForm: React.FC<Props> = ({ onClientAdded, onClose }) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [createdBy, setCreatedBy] = useState('');
@@ -13,6 +15,8 @@ const ClientForm: React.FC<Props> = ({ onClientAdded }) => {
   const [metodoPreferido, setMetodoPreferido] = useState<'Retiro en Sitio' | 'Domicilio'>('Retiro en Sitio');
   const [currentUserId, setCurrentUserId] = useState('');
   
+  const { toast } = useToast()
+
   useEffect(() => {
     getSession()
   },[])
@@ -44,6 +48,11 @@ const ClientForm: React.FC<Props> = ({ onClientAdded }) => {
 
       if (error) {
         console.error('Error adding client:', error);
+        toast({
+          title: "Ocurrió un error agregando el Cliente",
+          duration: 3000,
+          className: "bg-green-200"
+        })
       } else {
         setEmail('');
         setName('');
@@ -51,6 +60,13 @@ const ClientForm: React.FC<Props> = ({ onClientAdded }) => {
         setPhoneNumber('');
         setMetodoPreferido('Retiro en Sitio');
         onClientAdded();
+        onClose();
+
+        toast({
+          title: "Cliente Agregado Correctamente",
+          duration: 3000,
+          className: "bg-green-200"
+        })
       }
     }
   };
@@ -97,11 +113,18 @@ const ClientForm: React.FC<Props> = ({ onClientAdded }) => {
         </select>
       </div>
       <button
+        onClick={onClose}
+        className="px-4 py-2 outline mr-3 mt-2 outline-offset-1 outline-cyan-500 text-black rounded hover:bg-gray-300 focus:outline-none focus:bg-gray-200"
+      >
+        Descartar
+      </button>
+      <button
         onClick={addClient}
         className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:bg-green-600"
       >
         Agregar Cliente
       </button>
+      
     </div>
   );
 };

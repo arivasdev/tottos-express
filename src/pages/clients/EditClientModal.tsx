@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '@/supabaseClient';
+import { useToast } from "@/components/ui/use-toast"
 
 interface Client {
   id: string;
@@ -19,11 +20,12 @@ const EditClientModal: React.FC<Props> = ({ client, onClose }) => {
   const [email, setEmail] = useState(client.email);
   const [name, setName] = useState(client.name);
   const [phoneNumber, setPhoneNumber] = useState(client.phone_number);
-  const [metodoPreferido, setMetodoPreferido] = useState<'En sitio' | 'Domicilio'>(client.metodo_preferido);
+  const [metodoPreferido, setMetodoPreferido] = useState<'Retiro en Sitio' | 'Domicilio'>(client.metodo_preferido);
+  const { toast } = useToast()
 
   const updateClient = async () => {
     const { error } = await supabase
-      .from('clients')
+      .from('Clients')
       .update({
         email,
         name,
@@ -34,7 +36,18 @@ const EditClientModal: React.FC<Props> = ({ client, onClose }) => {
 
     if (error) {
       console.error('Error updating client:', error);
+      toast({
+        title: "Ocurrió un error actualizando el cliente",
+        duration: 3000,
+        className: "bg-red-200"
+      })
     } else {
+
+      toast({
+        title: "Cliente Actualizado Correctamente",
+        duration: 3000,
+        className: "bg-green-200"
+      })
       onClose();
     }
   };
@@ -74,10 +87,10 @@ const EditClientModal: React.FC<Props> = ({ client, onClose }) => {
           <label className="block text-sm font-medium text-gray-700 mb-2">Método Preferido</label>
           <select
             value={metodoPreferido}
-            onChange={(e) => setMetodoPreferido(e.target.value as 'En sitio' | 'Domicilio')}
+            onChange={(e) => setMetodoPreferido(e.target.value as 'Retiro en Sitio' | 'Domicilio')}
             className="w-full p-2 border border-gray-300 rounded"
           >
-            <option value="En sitio">En sitio</option>
+            <option value="Retiro en Sitio">Retiro en Sitio</option>
             <option value="Domicilio">Domicilio</option>
           </select>
         </div>

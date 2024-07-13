@@ -2,72 +2,171 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/supabaseClient';
 import ClientForm from './ClientForm';
 import EditClientModal from './EditClientModal';
+import Modal from '@/components/Modal';
+import { DataTable } from "@/components/DataTable";
+import { MoreHorizontal } from "lucide-react"
+
+import { Button } from "@/components/ui/Button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu"
+
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/Table";
+
+import { ColumnDef } from "@tanstack/react-table"
+
 
 interface Client {
-  id: string;
-  email: string;
-  name: string;
-  created_by: string;
-  phone_number: string;
-  metodo_preferido: 'En sitio' | 'Domicilio';
+    id: string;
+    email: string;
+    name: string;
+    created_by: string;
+    phone_number: string;
+    metodo_preferido: 'En sitio' | 'Domicilio';
 }
 
 const Clients: React.FC = () => {
-  const [clients, setClients] = useState<Client[]>([]);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  useEffect(() => {
-    fetchClients();
-  }, []);
+    const columns: ColumnDef<Client>[] = [
+        {
+            accessorKey: "name",
+            header: () => <div className="text-left">Nombre</div>,
+            /*SERVIRÁ PARA FORMATEAR VALORES
+            cell: ({ row }) => {
+                const amount = parseFloat(row.getValue("amount"))
+                const formatted = new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(amount)
+           
+                return <div className="text-right font-medium">{formatted}</div>
+              },*/
+        },
+        {
+            accessorKey: "email",
+            header: "Email",
+        },
+        {
+            accessorKey: "phone_number",
+            header: "Teléfono",
+        },
+        {
+            accessorKey: "metodo_preferido",
+            header: "Pref. Entrega",
+        },
+        {
+            id: "actions",
+            cell: ({ row }) => {
+            let client = row.original;
+         
+              return (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <span className="sr-only">Abrir menu</span>
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className='rounded-md border bg-white shadow-md' align="end">
+                    <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                    <DropdownMenuItem className='hover:bg-gray-200'
+                      onClick={() => handleEditClick(client)}
+                    >
+                      Editar
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className='hover:bg-gray-200'
+                      onClick={() => navigator.clipboard.writeText(payment.id)}
+                    >
+                      Ver Direcciones
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className='hover:bg-gray-200'
+                      onClick={() => navigator.clipboard.writeText(payment.id)}
+                    >
+                      Ver Pedidos
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )
+            },
+          },
+    ]
 
-  const fetchClients = async () => {
-    const { data, error } = await supabase.from<Client>('Clients').select('*');
-    if (error) {
-      console.error('Error fetching clients:', error);
-    } else {
-      setClients(data || []);
-    }
-  };
+    const [clients, setClients] = useState<Client[]>([]);
+    const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isClientModalOpen, setClientModalOpen] = useState(false);
 
-  const handleEditClick = (client: Client) => {
-    setSelectedClient(client);
-    setIsEditModalOpen(true);
-  };
+    const openClientModal = () => {
+        setClientModalOpen(true);
+    };
 
-  const handleModalClose = () => {
-    setIsEditModalOpen(false);
-    setSelectedClient(null);
-    fetchClients();
-  };
+    useEffect(() => {
+        fetchClients();
+    }, []);
 
-  return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Gestión de Clientes</h1>
-      <ClientForm onClientAdded={fetchClients} />
-      <div className="grid grid-cols-1 gap-4 mt-4">
-        {clients.map((client) => (
-          <div key={client.id} className="bg-white shadow-md rounded-lg p-4 flex justify-between items-center">
-            <div>
-              <h2 className="text-lg font-bold">{client.name}</h2>
-              <p>Email: {client.email}</p>
-              <p>Teléfono: {client.phone_number}</p>
-              <p>Método Preferido: {client.metodo_preferido}</p>
-            </div>
+    const fetchClients = async () => {
+        const { data, error } = await supabase.from<Client>('Clients').select('*').order('name', { ascending: true });
+        if (error) {
+            console.error('Error fetching clients:', error);
+        } else {
+            setClients(data || []);
+        }
+    };
+
+    const handleEditClick = (client: Client) => {
+        setSelectedClient(client);
+        setIsEditModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setIsEditModalOpen(false);
+        setSelectedClient(null);
+        fetchClients();
+    };
+
+    const closeClientModal = () => {
+        setClientModalOpen(false);
+    };
+
+    return (
+        <div>
+            <h1 className="text-2xl font-bold mb-4">Gestión de Clientes</h1>
             <button
-              onClick={() => handleEditClick(client)}
-              className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                onClick={openClientModal}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
             >
-              Editar
+                Agregar Cliente
             </button>
-          </div>
-        ))}
-      </div>
-      {isEditModalOpen && selectedClient && (
-        <EditClientModal client={selectedClient} onClose={handleModalClose} />
-      )}
-    </div>
-  );
+            <Modal isOpen={isClientModalOpen} onClose={closeClientModal}>
+                <ClientForm onClose={closeClientModal} onClientAdded={fetchClients} />
+            </Modal>
+
+            <div className="container mx-auto py-10">
+                <DataTable columns={columns} data={clients} />
+            </div>
+            {isEditModalOpen && selectedClient && (
+                <EditClientModal client={selectedClient} onClose={handleModalClose} />
+            )}
+            {}
+        </div>
+
+        
+    );
 };
 
 export default Clients;
