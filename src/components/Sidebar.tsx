@@ -18,6 +18,9 @@ const Sidebar: React.FC = () => {
                     <li onClick={() => setOpenOption("/")} className="p-4 hover:bg-gray-700">
                         <Link to="/">Inicio</Link>
                     </li>
+                    <li onClick={() => setOpenOption("/clients")} className="p-4 hover:bg-gray-700">
+                        <Link to="/clients">Clientes</Link>
+                    </li>
                     <Separator className="text-white" />
                     <li className="p-4 hover:bg-gray-700 cursor-pointer" onClick={() => { setOpenOption("/settings") }}>
                         <Link to="/settings">Configuración</Link>
