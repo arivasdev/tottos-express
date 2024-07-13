@@ -4,6 +4,7 @@ import Home from '@/pages/Home';
 import Users from '@/pages/settings/Users';
 import DeliveryRoutes from '@/pages/DeliveryRoutes';
 import Categories from '@/pages/categories/Categories';
+import Clients from '@/pages/clients/Clients';
 
 export default function SystemRoutes() {
     return (
@@ -13,6 +14,7 @@ export default function SystemRoutes() {
             <Route path="/settings/users" element={<Users />} />
             <Route path="/settings/delivery-routes" element={<DeliveryRoutes />} />
             <Route path="/categories/categories" element={<Categories />} />
+            <Route path="/clients" element={<Clients />} />
         </Routes>
     )
 }
