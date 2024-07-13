@@ -26,7 +26,7 @@ function App() {
     return (
       <Layout>
         <SystemRoutes />
-         <button onClick={() => supabase.auth.signOut()}>Sign out</button>
+         
       </Layout>
     )
   }
