@@ -35,12 +35,16 @@ import { useLocation } from 'react-router-dom';
 
 interface Address {
     id: string;
-    email: string;
-    Address_id: string;
     country_id: string;
-    rounte_id: string;
+    route_id: string;
     address: string;
     isActive: boolean;
+    Countries: {
+        name: string;
+    };
+    DeliveryRoutes: {
+        name: string;
+    };
 }
 const Addresses: React.FC = () => {
 
@@ -48,14 +52,14 @@ const Addresses: React.FC = () => {
     const { row } = location.state;
     const columns: ColumnDef<Address>[] = [
         {
-            accessorKey: "name",
+            accessorKey: "address",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Nombre
+                        Dirección
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 )
@@ -72,40 +76,40 @@ const Addresses: React.FC = () => {
               },*/
         },
         {
-            accessorKey: "email",
+            accessorKey: "Countries.name",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Email
+                        País
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 )
             },
         },
         {
-            accessorKey: "phone_number",
-            header: "Teléfono",
-        },
-        {
-            accessorKey: "metodo_preferido",
+            accessorKey: "DeliveryRoutes.name",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Pref. Entrega
+                        Ruta de Entrega
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 )
             },
-            cell: ({ row }) => {
-                const metodo = row.getValue("metodo_preferido")
+        },
 
-                return <Badge className={metodo == "Retiro en Sitio" ? "bg-teal-300" : "bg-yellow-200"} variant="outline">{metodo}</Badge>
+        {
+            accessorKey: "defaultAddress",
+            header: "",
+            cell: ({ row }) => {
+                const isDefault = row.getValue("defaultAddress");
+                return isDefault ? <Badge className="bg-green-300">Default</Badge> : ""
             },
         },
         {
@@ -131,14 +135,9 @@ const Addresses: React.FC = () => {
 
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className='hover:bg-gray-200'
-                                onClick={() => navigator.clipboard.writeText(payment.id)}
+                                onClick={() => defineDefaultAddress(Address.id)}
                             >
-                                Ver Direcciones
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className='hover:bg-gray-200'
-                                onClick={() => navigator.clipboard.writeText(payment.id)}
-                            >
-                                Ver Pedidos
+                                Definir como Default
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -152,11 +151,12 @@ const Addresses: React.FC = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isAddressModalOpen, setAddressModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [clientId, setClientId] = useState('');
 
     const filteredData = Addresses.filter(fila =>
-        fila.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         fila.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        fila.country_id.toLowerCase().includes(searchTerm.toLowerCase())
+        fila.DeliveryRoutes.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        fila.Countries.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const openAddressModal = () => {
@@ -167,8 +167,27 @@ const Addresses: React.FC = () => {
         fetchAddresss();
     }, []);
 
+    const defineDefaultAddress = async (addressid: string) => {
+        const { error, data } = await supabase.rpc('setDefaultAddress', {
+            clientid: clientId,
+            addressid
+          });
+          console.log("🚀 ~ addAddress ~ data:", data)
+      
+          if (error) {
+            console.error('Error setting default address:', error);
+          } else {
+            console.log('Default address updated successfully:', data);
+          }
+
+        fetchAddresss();
+    }
+
     const fetchAddresss = async () => {
-        const { data, error } = await supabase.from<Address>('Client_Address').select('*');
+        const { data, error } = await supabase.from<Address>('Client_Address').select('*, Countries(name), DeliveryRoutes(name)')
+            .eq("client_id", row.id).order('id', { ascending: true });
+        if(!clientId)
+            setClientId(row.id);
         if (error) {
             console.error('Error fetching Addresses:', error);
         } else {
@@ -205,15 +224,15 @@ const Addresses: React.FC = () => {
                     <BreadcrumbSeparator />
                     <BreadcrumbPage>{row.name}</BreadcrumbPage>
                     <BreadcrumbSeparator />
-                    <BreadcrumbPage>Direcciones</BreadcrumbPage>
-                    
+                    <BreadcrumbPage>Direcciones de Entrega</BreadcrumbPage>
+
                 </BreadcrumbList>
             </Breadcrumb>
-            <ClientInfo client={row} />
             <h1 className="text-2xl font-bold mb-4">Direcciones de entrega</h1>
+            <ClientInfo client={row} />
             <button
                 onClick={openAddressModal}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                className="px-4 py-2 mt-4 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
             >
                 Agregar Dirección
             </button>
@@ -221,7 +240,7 @@ const Addresses: React.FC = () => {
                 <AddressForm onClose={closeAddressModal} onAddressAdded={fetchAddresss} client={row} />
             </Modal>
 
-            <div className="container mx-auto py-10">
+            <div className="container mx-auto py-5">
                 <input
                     type="text"
                     placeholder="Buscar..."

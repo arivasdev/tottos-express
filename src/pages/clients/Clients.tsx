@@ -100,6 +100,7 @@ const Clients: React.FC = () => {
             id: "actions",
             cell: ({ row }) => {
                 let client = row.original;
+                console.log("🚀 ~ client:", client)
 
                 return (
                     <DropdownMenu>
@@ -124,11 +125,6 @@ const Clients: React.FC = () => {
                                 </DropdownMenuItem>
                             </Link>
 
-                            <DropdownMenuItem className='hover:bg-gray-200'
-                                onClick={() => navigator.clipboard.writeText(client.id)}
-                            >
-                                Ver Pedidos
-                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 )

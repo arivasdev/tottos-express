@@ -6,7 +6,7 @@ import Country from '@/interfaces/country';
 import DeliveryRoute from '@/interfaces/deliveryRoute';
 
 interface Props {
-  onAddressAdded: () => void;  
+  onAddressAdded: () => void;
   onClose: () => void;
   client: Client;
 }
@@ -18,65 +18,69 @@ const AddressForm: React.FC<Props> = ({ onAddressAdded, onClose, client }) => {
   const [currentUserId, setCurrentUserId] = useState('');
   const [countries, setCountries] = useState<Country[]>([]);
   const [routes, setRoutes] = useState<Country[]>([]);
+  const [defaultAddress, setDefaultAddress] = useState(true);
   
+
   const { toast } = useToast()
 
   useEffect(() => {
-    getSession()
-  },[])
+    getSession();
+    fetchCountries();
+  }, [])
 
   const getSession = async () => {
     const { data } = await supabase.auth.getSession();
     if (data) {
-        getUserId(data.session?.user.id!)
-        setCurrentUserId(data.session?.user.id!)
+      getUserId(data.session?.user.id!)
+      setCurrentUserId(data.session?.user.id!)
     }
-    
+
   };
 
-const fetchCountries = async () => {
+  const fetchCountries = async () => {
     const { data, error } = await supabase.from<Country>('Countries').select('*');
     if (error) {
-        console.error('Error fetching Countries:', error);
+      console.error('Error fetching Countries:', error);
     } else {
-        setCountries(data || []);
+      setCountries(data || []);
     }
-};
-useEffect(() => {
-  if (countryId) {
-    const fetchRoutes = async () => {
-      const { data, error } = await supabase
-        .from<DeliveryRoute>('DeliveryRoutes')
-        .select('*')
-        .eq('countryId', countryId);
+  };
+  useEffect(() => {
+    if (countryId) {
+      const fetchRoutes = async () => {
+        const { data, error } = await supabase
+          .from<DeliveryRoute>('DeliveryRoutes')
+          .select('*')
+          .eq('countryId', countryId);
 
-      if (error) {
-        console.error('Error fetching routes:', error);
-      } else {
-        setRoutes(data || []);
-      }
-    };
+        if (error) {
+          console.error('Error fetching routes:', error);
+        } else {
+          setRoutes(data || []);
+        }
+      };
 
-    fetchRoutes();
-  }
-}, [countryId]);
+      fetchRoutes();
+    }
+  }, [countryId]);
 
   const getUserId = async (userGuid: string) => {
-    const { data } = await supabase.from("Client_Address").select("id").eq("user_UID", userGuid);
-    if(data){
-        setCurrentUserId(data[0].id);
+    const { data } = await supabase.from("Users").select("id").eq("user_UID", userGuid);
+    if (data) {
+      setCurrentUserId(data[0].id);
     }
   }
   const addAddress = async () => {
     if (countryId.trim() && address.trim() && routeId.trim()) {
-      const { error } = await supabase.from('Client_Address').insert({
+      const { error, data } = await supabase.from('Client_Address').insert({
         client_id: client.id,
         country_id: countryId,
         route_id: routeId,
         address: address,
-        created_by: currentUserId 
-      });
-
+        created_by: currentUserId
+      })
+      .select('id'); 
+      
       if (error) {
         console.error('Error adding Address:', error);
         toast({
@@ -91,6 +95,23 @@ useEffect(() => {
         setRouteId('');
         onAddressAdded();
         onClose();
+
+        let addressid =data[0]?.id;
+        let clientid = client.id;
+        if (addressid){
+          
+          const { error, data } = await supabase.rpc('setDefaultAddress', {
+            clientid,
+            addressid
+          });
+          console.log("🚀 ~ addAddress ~ data:", data)
+      
+          if (error) {
+            console.error('Error setting default address:', error);
+          } else {
+            console.log('Default address updated successfully:', data);
+          }
+        }
 
         toast({
           title: "Dirección Agregada Correctamente",
@@ -111,11 +132,14 @@ useEffect(() => {
           onChange={(e) => setCountryId(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded"
         >
-           {countries.map((country) => (
+          <option key="-1">
+            Selecciona un País
+          </option>
+          {countries.map((country) => (
             <option key={country.id} value={country.id}>
               {country.name}
             </option>
-          ))} 
+          ))}
         </select>
       </div>
       <div className="mb-4">
@@ -125,11 +149,14 @@ useEffect(() => {
           onChange={(e) => setRouteId(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded"
         >
-           {routes.map((route) => (
+          <option key="-1">
+            Selecciona una Ruta de Entrega
+          </option>
+          {routes.map((route) => (
             <option key={route.id} value={route.id}>
               {route.name}
             </option>
-          ))} 
+          ))}
         </select>
       </div>
       <div className="mb-4">
@@ -141,6 +168,24 @@ useEffect(() => {
           className="w-full p-2 border border-gray-300 rounded"
         />
       </div>
+      <div className="flex items-center mb-4">
+        <label className="block text-sm font-medium text-gray-700 mr-4">Dirección Predeterminada</label>
+        <input
+          type="checkbox"
+          id="toggleCobroPorPeso"
+          className="hidden"
+          checked={defaultAddress}
+          onChange={(e) => setDefaultAddress(e.target.checked)}
+        />
+        <label htmlFor="toggleCobroPorPeso" className="flex items-center cursor-pointer ml-2">
+          <div className={`block ${defaultAddress ? 'bg-green-500' : 'bg-gray-600'} w-14 h-8 rounded-full relative`}>
+            <div
+              className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${defaultAddress ? 'transform translate-x-full bg-green-500' : ''
+                }`}
+            ></div>
+          </div>
+        </label>
+      </div>
       <button
         onClick={onClose}
         className="px-4 py-2 outline mr-3 mt-2 outline-offset-1 outline-cyan-500 text-black rounded hover:bg-gray-300 focus:outline-none focus:bg-gray-200"
@@ -151,9 +196,9 @@ useEffect(() => {
         onClick={addAddress}
         className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:bg-green-600"
       >
-        Agregar Addresse
+        Agregar Dirección
       </button>
-      
+
     </div>
   );
 };
