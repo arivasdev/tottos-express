@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/supabaseClient';
-import ClientForm from './ClientForm';
-import EditClientModal from './EditClientModal';
+import AddressForm from './AddressForm';
+import EditAddressModal from './EditAddressModal';
 import Modal from '@/components/Modal';
 import { DataTable } from "@/components/DataTable";
 import { MoreHorizontal, ArrowUpDown } from "lucide-react"
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+
 import { Button } from "@/components/ui/Button"
 import {
     DropdownMenu,
@@ -22,19 +15,38 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu"
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
 import { Badge } from "@/components/ui/badge"
 
 
 import { ColumnDef } from "@tanstack/react-table"
 import Client from '@/interfaces/client';
-import { Link } from 'react-router-dom';
+import ClientInfo from '../clients/ClientInfo';
+import { useLocation } from 'react-router-dom';
 
 
+interface Address {
+    id: string;
+    email: string;
+    Address_id: string;
+    country_id: string;
+    rounte_id: string;
+    address: string;
+    isActive: boolean;
+}
+const Addresses: React.FC = () => {
 
-const Clients: React.FC = () => {
-
-    const columns: ColumnDef<Client>[] = [
+    const location = useLocation<{ row: Client }>();
+    const { row } = location.state;
+    const columns: ColumnDef<Address>[] = [
         {
             accessorKey: "name",
             header: ({ column }) => {
@@ -99,7 +111,7 @@ const Clients: React.FC = () => {
         {
             id: "actions",
             cell: ({ row }) => {
-                let client = row.original;
+                let Address = row.original;
 
                 return (
                     <DropdownMenu>
@@ -112,20 +124,19 @@ const Clients: React.FC = () => {
                         <DropdownMenuContent className='rounded-md border bg-white shadow-md' align="end">
                             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
                             <DropdownMenuItem className='hover:bg-gray-200'
-                                onClick={() => handleEditClick(client)}
+                                onClick={() => handleEditClick(Address)}
                             >
                                 Editar
                             </DropdownMenuItem>
 
                             <DropdownMenuSeparator />
-                            <Link to={`/addresses/${row.id}`} state={{ row: client }}>
-                                <DropdownMenuItem className='hover:bg-gray-200'>
-                                    Ver Direcciones
-                                </DropdownMenuItem>
-                            </Link>
-
                             <DropdownMenuItem className='hover:bg-gray-200'
-                                onClick={() => navigator.clipboard.writeText(client.id)}
+                                onClick={() => navigator.clipboard.writeText(payment.id)}
+                            >
+                                Ver Direcciones
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className='hover:bg-gray-200'
+                                onClick={() => navigator.clipboard.writeText(payment.id)}
                             >
                                 Ver Pedidos
                             </DropdownMenuItem>
@@ -136,49 +147,50 @@ const Clients: React.FC = () => {
         },
     ]
 
-    const [clients, setClients] = useState<Client[]>([]);
-    const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+    const [Addresses, setAddresss] = useState<Address[]>([]);
+    const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [isClientModalOpen, setClientModalOpen] = useState(false);
+    const [isAddressModalOpen, setAddressModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const filteredData = clients.filter(row =>
-        row.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.metodo_preferido.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredData = Addresses.filter(fila =>
+        fila.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        fila.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        fila.country_id.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const openClientModal = () => {
-        setClientModalOpen(true);
+    const openAddressModal = () => {
+        setAddressModalOpen(true);
     };
 
     useEffect(() => {
-        fetchClients();
+        fetchAddresss();
     }, []);
 
-    const fetchClients = async () => {
-        const { data, error } = await supabase.from<Client>('Clients').select('*').order('name', { ascending: true });
+    const fetchAddresss = async () => {
+        const { data, error } = await supabase.from<Address>('Client_Address').select('*');
         if (error) {
-            console.error('Error fetching clients:', error);
+            console.error('Error fetching Addresses:', error);
         } else {
-            setClients(data || []);
+            setAddresss(data || []);
         }
     };
 
-    const handleEditClick = (client: Client) => {
-        setSelectedClient(client);
+    const handleEditClick = (Address: Address) => {
+        setSelectedAddress(Address);
         setIsEditModalOpen(true);
     };
 
     const handleModalClose = () => {
         setIsEditModalOpen(false);
-        setSelectedClient(null);
-        fetchClients();
+        setSelectedAddress(null);
+        fetchAddresss();
     };
 
-    const closeClientModal = () => {
-        setClientModalOpen(false);
+    const closeAddressModal = () => {
+        setAddressModalOpen(false);
     };
+
     return (
         <div>
             <Breadcrumb>
@@ -190,20 +202,26 @@ const Clients: React.FC = () => {
                     <BreadcrumbItem>
                         <BreadcrumbLink href="/clients">Clientes</BreadcrumbLink>
                     </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbPage>{row.name}</BreadcrumbPage>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbPage>Direcciones</BreadcrumbPage>
+                    
                 </BreadcrumbList>
             </Breadcrumb>
-            <h1 className="text-2xl font-bold mb-4">Gestión de Clientes</h1>
+            <ClientInfo client={row} />
+            <h1 className="text-2xl font-bold mb-4">Direcciones de entrega</h1>
             <button
-                onClick={openClientModal}
+                onClick={openAddressModal}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
             >
-                Agregar Cliente
+                Agregar Dirección
             </button>
-            <Modal isOpen={isClientModalOpen} onClose={closeClientModal}>
-                <ClientForm onClose={closeClientModal} onClientAdded={fetchClients} />
+            <Modal isOpen={isAddressModalOpen} onClose={closeAddressModal}>
+                <AddressForm onClose={closeAddressModal} onAddressAdded={fetchAddresss} client={row} />
             </Modal>
 
-            <div className="mx-auto py-10">
+            <div className="container mx-auto py-10">
                 <input
                     type="text"
                     placeholder="Buscar..."
@@ -213,8 +231,8 @@ const Clients: React.FC = () => {
                 />
                 <DataTable columns={columns} data={filteredData} />
             </div>
-            {isEditModalOpen && selectedClient && (
-                <EditClientModal client={selectedClient} onClose={handleModalClose} />
+            {isEditModalOpen && selectedAddress && (
+                <EditAddressModal Address={selectedAddress} onClose={handleModalClose} />
             )}
             { }
         </div>
@@ -223,4 +241,4 @@ const Clients: React.FC = () => {
     );
 };
 
-export default Clients;
+export default Addresses;
