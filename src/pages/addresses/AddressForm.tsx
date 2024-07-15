@@ -17,7 +17,7 @@ const AddressForm: React.FC<Props> = ({ onAddressAdded, onClose, client }) => {
   const [address, setAddress] = useState('');
   const [currentUserId, setCurrentUserId] = useState('');
   const [countries, setCountries] = useState<Country[]>([]);
-  const [routes, setRoutes] = useState<Country[]>([]);
+  const [routes, setRoutes] = useState<DeliveryRoute[]>([]);
   const [defaultAddress, setDefaultAddress] = useState(true);
   
 
@@ -172,12 +172,12 @@ const AddressForm: React.FC<Props> = ({ onAddressAdded, onClose, client }) => {
         <label className="block text-sm font-medium text-gray-700 mr-4">Dirección Predeterminada</label>
         <input
           type="checkbox"
-          id="toggleCobroPorPeso"
+          id="toggle"
           className="hidden"
           checked={defaultAddress}
           onChange={(e) => setDefaultAddress(e.target.checked)}
         />
-        <label htmlFor="toggleCobroPorPeso" className="flex items-center cursor-pointer ml-2">
+        <label htmlFor="toggle" className="flex items-center cursor-pointer ml-2">
           <div className={`block ${defaultAddress ? 'bg-green-500' : 'bg-gray-600'} w-14 h-8 rounded-full relative`}>
             <div
               className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${defaultAddress ? 'transform translate-x-full bg-green-500' : ''
@@ -190,7 +190,7 @@ const AddressForm: React.FC<Props> = ({ onAddressAdded, onClose, client }) => {
         onClick={onClose}
         className="px-4 py-2 outline mr-3 mt-2 outline-offset-1 outline-cyan-500 text-black rounded hover:bg-gray-300 focus:outline-none focus:bg-gray-200"
       >
-        Descartar
+        Descartar Cambios
       </button>
       <button
         onClick={addAddress}

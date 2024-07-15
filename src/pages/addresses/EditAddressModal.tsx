@@ -1,53 +1,106 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { supabase } from '@/supabaseClient';
 import { useToast } from "@/components/ui/use-toast"
+import DeliveryRoute from '@/interfaces/deliveryRoute';
+import Country from '@/interfaces/country';
+import { add } from 'date-fns';
 
-interface Client {
+interface Address {
   id: string;
-  email: string;
-  name: string;
-  created_by: string;
-  phone_number: string;
-  metodo_preferido: 'En sitio' | 'Domicilio';
+  country_id: string;
+  route_id: string;
+  address: string;
+  isActive: boolean;
+  client_id: string;
+  Countries: {
+    name: string;
+  };
+  DeliveryRoutes: {
+    name: string;
+  };
 }
 
 interface Props {
-  client: Client;
+  addressRecord: Address;
   onClose: () => void;
 }
 
-const EditClientModal: React.FC<Props> = ({ client, onClose }) => {
-  const [email, setEmail] = useState(client.email);
-  const [name, setName] = useState(client.name);
-  const [phoneNumber, setPhoneNumber] = useState(client.phone_number);
-  const [metodoPreferido, setMetodoPreferido] = useState<'Retiro en Sitio' | 'Domicilio'>(client.metodo_preferido);
+const EditClientModal: React.FC<Props> = ({ addressRecord, onClose }) => {
+  const [countryId, setCountryId] = useState(addressRecord.country_id);
+  const [routeId, setRouteId] = useState(addressRecord.route_id);
+  const [address, setAddress] = useState(addressRecord.address);
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [routes, setRoutes] = useState<DeliveryRoute[]>([]);
+  const [defaultAddress, setDefaultAddress] = useState(addressRecord.defaultAddress);
   const { toast } = useToast()
+
+  useEffect(() => {
+    fetchCountries();
+  }, [])
+  const fetchCountries = async () => {
+    const { data, error } = await supabase.from<Country>('Countries').select('*');
+    if (error) {
+      console.error('Error fetching Countries:', error);
+    } else {
+      setCountries(data || []);
+    }
+  };
+  useEffect(() => {
+    if (countryId) {
+      const fetchRoutes = async () => {
+        const { data, error } = await supabase
+          .from<DeliveryRoute>('DeliveryRoutes')
+          .select('*')
+          .eq('countryId', countryId);
+
+        if (error) {
+          console.error('Error fetching routes:', error);
+        } else {
+          setRoutes(data || []);
+        }
+      };
+
+      fetchRoutes();
+    }
+  }, [countryId]);
 
   const updateClient = async () => {
     const { error } = await supabase
-      .from('Clients')
+      .from('Client_Address')
       .update({
-        email,
-        name,
-        phone_number: phoneNumber,
-        metodo_preferido: metodoPreferido,
+        address,
+        country_id: countryId,
+        route_id: routeId,
       })
-      .eq('id', client.id);
+      .eq('id', addressRecord.id);
 
     if (error) {
-      console.error('Error updating client:', error);
+      console.error('Error updating address:', error);
       toast({
-        title: "Ocurrió un error actualizando el cliente",
+        title: "Ocurrió un error actualizando la dirección",
         duration: 3000,
         className: "bg-red-200"
       })
     } else {
 
       toast({
-        title: "Cliente Actualizado Correctamente",
+        title: "Dirección Actualizada Correctamente",
         duration: 3000,
         className: "bg-green-200"
       })
+      if (defaultAddress) {
+        const { error, data } = await supabase.rpc('setDefaultAddress', {
+          addressid: addressRecord.id,
+          clientid: addressRecord.client_id,
+        });
+        console.log("🚀 ~ addAddress ~ data:", data)
+
+        if (error) {
+          console.error('Error setting default address:', error);
+        } else {
+          console.log('Default address updated successfully:', data);
+        }
+      }
       onClose();
     }
   };
@@ -55,58 +108,82 @@ const EditClientModal: React.FC<Props> = ({ client, onClose }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h2 className="text-xl font-bold mb-4">Editar Cliente</h2>
+        <h2 className="text-xl font-bold mb-4">Editar Dirección</h2>
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
-          <input
-            type="text"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Método Preferido</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">País</label>
           <select
-            value={metodoPreferido}
-            onChange={(e) => setMetodoPreferido(e.target.value as 'Retiro en Sitio' | 'Domicilio')}
+            value={countryId}
+            onChange={(e) => setCountryId(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded"
           >
-            <option value="Retiro en Sitio">Retiro en Sitio</option>
-            <option value="Domicilio">Domicilio</option>
+            <option key="-1">
+              Selecciona un País
+            </option>
+            {countries.map((country) => (
+              <option key={country.id} value={country.id}>
+                {country.name}
+              </option>
+            ))}
           </select>
         </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Rutas</label>
+          <select
+            value={routeId}
+            onChange={(e) => setRouteId(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded"
+          >
+            <option key="-1">
+              Selecciona una Ruta de Entrega
+            </option>
+            {routes.map((route) => (
+              <option key={route.id} value={route.id}>
+                {route.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <div className="flex items-center mb-4">
+          <label className="block text-sm font-medium text-gray-700 mr-4">Dirección Predeterminada</label>
+          <input
+            type="checkbox"
+            id="toggle"
+            className="hidden"
+            checked={defaultAddress}
+            onChange={(e) => setDefaultAddress(e.target.checked)}
+          />
+          <label htmlFor="toggle" className="flex items-center cursor-pointer ml-2">
+            <div className={`block ${defaultAddress ? 'bg-green-500' : 'bg-gray-600'} w-14 h-8 rounded-full relative`}>
+              <div
+                className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${defaultAddress ? 'transform translate-x-full bg-green-500' : ''
+                  }`}
+              ></div>
+            </div>
+          </label>
+        </div>
         <div className="flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 outline mr-3 mt-2 outline-offset-1 outline-cyan-500 text-black rounded hover:bg-gray-300 focus:outline-none focus:bg-gray-200"
+          >
+            Descartar Cambios
+          </button>
           <button
             onClick={updateClient}
             className="mr-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:bg-green-600"
           >
             Guardar
           </button>
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:bg-red-600"
-          >
-            Cancelar
-          </button>
+
         </div>
       </div>
     </div>

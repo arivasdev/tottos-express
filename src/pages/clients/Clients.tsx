@@ -100,7 +100,6 @@ const Clients: React.FC = () => {
             id: "actions",
             cell: ({ row }) => {
                 let client = row.original;
-                console.log("🚀 ~ client:", client)
 
                 return (
                     <DropdownMenu>
@@ -119,7 +118,7 @@ const Clients: React.FC = () => {
                             </DropdownMenuItem>
 
                             <DropdownMenuSeparator />
-                            <Link to={`/addresses/${row.id}`} state={{ row: client }}>
+                            <Link to={`/addresses/${row.id}`} state={{ client: client }}>
                                 <DropdownMenuItem className='hover:bg-gray-200'>
                                     Ver Direcciones
                                 </DropdownMenuItem>

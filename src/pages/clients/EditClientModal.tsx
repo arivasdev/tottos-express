@@ -8,7 +8,7 @@ import Client from '@/interfaces/client';
 interface Props {
   client: Client;
   onClose: () => void;
-}
+} 
 
 const EditClientModal: React.FC<Props> = ({ client, onClose }) => {
   const [email, setEmail] = useState(client.email);

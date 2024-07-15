@@ -46,10 +46,11 @@ interface Address {
         name: string;
     };
 }
-const Addresses: React.FC = () => {
+interface props {
+    client: Client;
+}
+const Addresses: React.FC<props> = ({client}) => {
 
-    const location = useLocation<{ row: Client }>();
-    const { row } = location.state;
     const columns: ColumnDef<Address>[] = [
         {
             accessorKey: "address",
@@ -115,7 +116,7 @@ const Addresses: React.FC = () => {
         {
             id: "actions",
             cell: ({ row }) => {
-                let Address = row.original;
+                let direccion = row.original;
 
                 return (
                     <DropdownMenu>
@@ -128,14 +129,14 @@ const Addresses: React.FC = () => {
                         <DropdownMenuContent className='rounded-md border bg-white shadow-md' align="end">
                             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
                             <DropdownMenuItem className='hover:bg-gray-200'
-                                onClick={() => handleEditClick(Address)}
+                                onClick={() => handleEditClick(direccion)}
                             >
                                 Editar
                             </DropdownMenuItem>
 
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className='hover:bg-gray-200'
-                                onClick={() => defineDefaultAddress(Address.id)}
+                                onClick={() => defineDefaultAddress(direccion.id)}
                             >
                                 Definir como Default
                             </DropdownMenuItem>
@@ -185,9 +186,9 @@ const Addresses: React.FC = () => {
 
     const fetchAddresss = async () => {
         const { data, error } = await supabase.from<Address>('Client_Address').select('*, Countries(name), DeliveryRoutes(name)')
-            .eq("client_id", row.id).order('id', { ascending: true });
+            .eq("client_id", client.id).order('id', { ascending: true });
         if(!clientId)
-            setClientId(row.id);
+            setClientId(client.id);
         if (error) {
             console.error('Error fetching Addresses:', error);
         } else {
@@ -195,8 +196,8 @@ const Addresses: React.FC = () => {
         }
     };
 
-    const handleEditClick = (Address: Address) => {
-        setSelectedAddress(Address);
+    const handleEditClick = (direccion: Address) => {
+        setSelectedAddress(direccion);
         setIsEditModalOpen(true);
     };
 
@@ -212,24 +213,7 @@ const Addresses: React.FC = () => {
 
     return (
         <div>
-            <Breadcrumb>
-                <BreadcrumbList>
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href="/clients">Clientes</BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbPage>{row.name}</BreadcrumbPage>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbPage>Direcciones de Entrega</BreadcrumbPage>
-
-                </BreadcrumbList>
-            </Breadcrumb>
-            <h1 className="text-2xl font-bold mb-4">Direcciones de entrega</h1>
-            <ClientInfo client={row} />
+            
             <button
                 onClick={openAddressModal}
                 className="px-4 py-2 mt-4 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
@@ -237,7 +221,7 @@ const Addresses: React.FC = () => {
                 Agregar Dirección
             </button>
             <Modal isOpen={isAddressModalOpen} onClose={closeAddressModal}>
-                <AddressForm onClose={closeAddressModal} onAddressAdded={fetchAddresss} client={row} />
+                <AddressForm onClose={closeAddressModal} onAddressAdded={fetchAddresss} client={client} />
             </Modal>
 
             <div className="container mx-auto py-5">
@@ -251,7 +235,7 @@ const Addresses: React.FC = () => {
                 <DataTable columns={columns} data={filteredData} />
             </div>
             {isEditModalOpen && selectedAddress && (
-                <EditAddressModal Address={selectedAddress} onClose={handleModalClose} />
+                <EditAddressModal addressRecord={selectedAddress} onClose={handleModalClose} />
             )}
             { }
         </div>
