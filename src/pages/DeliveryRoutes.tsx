@@ -1,18 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
-
-interface Country {
-  id: string;
-  name: string;
-  code: string;
-}
-
-interface DeliveryRoute {
-  id: string;
-  name: string;
-  countryId: string;
-  isActive: boolean;
-}
+import Country from '@/interfaces/country';
+import DeliveryRoute from '@/interfaces/deliveryRoute';
 
 const DeliveryRoutes: React.FC = () => {
   const [countries, setCountries] = useState<Country[]>([]);

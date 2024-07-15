@@ -1,20 +1,14 @@
 import React, { useState } from 'react';
 import { supabase } from '@/supabaseClient';
 import { useToast } from "@/components/ui/use-toast"
+import Client from '@/interfaces/client';
 
-interface Client {
-  id: string;
-  email: string;
-  name: string;
-  created_by: string;
-  phone_number: string;
-  metodo_preferido: 'En sitio' | 'Domicilio';
-}
+
 
 interface Props {
   client: Client;
   onClose: () => void;
-}
+} 
 
 const EditClientModal: React.FC<Props> = ({ client, onClose }) => {
   const [email, setEmail] = useState(client.email);
