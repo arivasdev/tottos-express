@@ -5,6 +5,7 @@ import { Session } from '@supabase/supabase-js';
 import { LoginForm } from '@/components/login/LoginForm'
 import Layout from '@/components/Layout'
 import SystemRoutes from './components/SystemRoutes';
+import { Toaster } from "@/components/ui/toaster"
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -26,7 +27,7 @@ function App() {
     return (
       <Layout>
         <SystemRoutes />
-         <button onClick={() => supabase.auth.signOut()}>Sign out</button>
+        <Toaster />
       </Layout>
     )
   }
