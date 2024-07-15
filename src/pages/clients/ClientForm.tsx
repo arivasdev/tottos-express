@@ -10,7 +10,6 @@ interface Props {
 const ClientForm: React.FC<Props> = ({ onClientAdded, onClose }) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
-  const [createdBy, setCreatedBy] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [metodoPreferido, setMetodoPreferido] = useState<'Retiro en Sitio' | 'Domicilio'>('Retiro en Sitio');
   const [currentUserId, setCurrentUserId] = useState('');
@@ -51,12 +50,11 @@ const ClientForm: React.FC<Props> = ({ onClientAdded, onClose }) => {
         toast({
           title: "Ocurrió un error agregando el Cliente",
           duration: 3000,
-          className: "bg-green-200"
+          className: "bg-red-200"
         })
       } else {
         setEmail('');
         setName('');
-        setCreatedBy('');
         setPhoneNumber('');
         setMetodoPreferido('Retiro en Sitio');
         onClientAdded();

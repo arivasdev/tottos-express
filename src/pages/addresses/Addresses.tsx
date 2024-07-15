@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/supabaseClient';
-import ClientForm from './ClientForm';
-import EditClientModal from './EditClientModal';
+import AddressForm from './AddressForm';
+import EditAddressModal from './EditAddressModal';
 import Modal from '@/components/Modal';
 import { DataTable } from "@/components/DataTable";
 import { MoreHorizontal, ArrowUpDown } from "lucide-react"
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+
 import { Button } from "@/components/ui/Button"
 import {
     DropdownMenu,
@@ -22,28 +15,52 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu"
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
 import { Badge } from "@/components/ui/badge"
 
 
 import { ColumnDef } from "@tanstack/react-table"
 import Client from '@/interfaces/client';
-import { Link } from 'react-router-dom';
+import ClientInfo from '../clients/ClientInfo';
+import { useLocation } from 'react-router-dom';
 
 
+interface Address {
+    id: string;
+    country_id: string;
+    route_id: string;
+    address: string;
+    isActive: boolean;
+    Countries: {
+        name: string;
+    };
+    DeliveryRoutes: {
+        name: string;
+    };
+}
+interface props {
+    client: Client;
+}
+const Addresses: React.FC<props> = ({client}) => {
 
-const Clients: React.FC = () => {
-
-    const columns: ColumnDef<Client>[] = [
+    const columns: ColumnDef<Address>[] = [
         {
-            accessorKey: "name",
+            accessorKey: "address",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Nombre
+                        Dirección
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 )
@@ -60,46 +77,46 @@ const Clients: React.FC = () => {
               },*/
         },
         {
-            accessorKey: "email",
+            accessorKey: "Countries.name",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Email
+                        País
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 )
             },
         },
         {
-            accessorKey: "phone_number",
-            header: "Teléfono",
-        },
-        {
-            accessorKey: "metodo_preferido",
+            accessorKey: "DeliveryRoutes.name",
             header: ({ column }) => {
                 return (
                     <Button
                         variant="ghost"
                         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Pref. Entrega
+                        Ruta de Entrega
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 )
             },
-            cell: ({ row }) => {
-                const metodo = row.getValue("metodo_preferido")
+        },
 
-                return <Badge className={metodo == "Retiro en Sitio" ? "bg-teal-300" : "bg-yellow-200"} variant="outline">{metodo}</Badge>
+        {
+            accessorKey: "defaultAddress",
+            header: "",
+            cell: ({ row }) => {
+                const isDefault = row.getValue("defaultAddress");
+                return isDefault ? <Badge className="bg-green-300">Default</Badge> : ""
             },
         },
         {
             id: "actions",
             cell: ({ row }) => {
-                let client = row.original;
+                let direccion = row.original;
 
                 return (
                     <DropdownMenu>
@@ -112,18 +129,17 @@ const Clients: React.FC = () => {
                         <DropdownMenuContent className='rounded-md border bg-white shadow-md' align="end">
                             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
                             <DropdownMenuItem className='hover:bg-gray-200'
-                                onClick={() => handleEditClick(client)}
+                                onClick={() => handleEditClick(direccion)}
                             >
                                 Editar
                             </DropdownMenuItem>
 
                             <DropdownMenuSeparator />
-                            <Link to={`/addresses/${row.id}`} state={{ client: client }}>
-                                <DropdownMenuItem className='hover:bg-gray-200'>
-                                    Ver Direcciones
-                                </DropdownMenuItem>
-                            </Link>
-
+                            <DropdownMenuItem className='hover:bg-gray-200'
+                                onClick={() => defineDefaultAddress(direccion.id)}
+                            >
+                                Definir como Default
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 )
@@ -131,74 +147,84 @@ const Clients: React.FC = () => {
         },
     ]
 
-    const [clients, setClients] = useState<Client[]>([]);
-    const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+    const [Addresses, setAddresss] = useState<Address[]>([]);
+    const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [isClientModalOpen, setClientModalOpen] = useState(false);
+    const [isAddressModalOpen, setAddressModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [clientId, setClientId] = useState('');
 
-    const filteredData = clients.filter(row =>
-        row.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.metodo_preferido.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredData = Addresses.filter(fila =>
+        fila.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        fila.DeliveryRoutes.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        fila.Countries.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const openClientModal = () => {
-        setClientModalOpen(true);
+    const openAddressModal = () => {
+        setAddressModalOpen(true);
     };
 
     useEffect(() => {
-        fetchClients();
+        fetchAddresss();
     }, []);
 
-    const fetchClients = async () => {
-        const { data, error } = await supabase.from<Client>('Clients').select('*').order('name', { ascending: true });
+    const defineDefaultAddress = async (addressid: string) => {
+        const { error, data } = await supabase.rpc('setDefaultAddress', {
+            clientid: clientId,
+            addressid
+          });
+          console.log("🚀 ~ addAddress ~ data:", data)
+      
+          if (error) {
+            console.error('Error setting default address:', error);
+          } else {
+            console.log('Default address updated successfully:', data);
+          }
+
+        fetchAddresss();
+    }
+
+    const fetchAddresss = async () => {
+        const { data, error } = await supabase.from<Address>('Client_Address').select('*, Countries(name), DeliveryRoutes(name)')
+            .eq("client_id", client.id).order('id', { ascending: true });
+        if(!clientId)
+            setClientId(client.id);
         if (error) {
-            console.error('Error fetching clients:', error);
+            console.error('Error fetching Addresses:', error);
         } else {
-            setClients(data || []);
+            setAddresss(data || []);
         }
     };
 
-    const handleEditClick = (client: Client) => {
-        setSelectedClient(client);
+    const handleEditClick = (direccion: Address) => {
+        setSelectedAddress(direccion);
         setIsEditModalOpen(true);
     };
 
     const handleModalClose = () => {
         setIsEditModalOpen(false);
-        setSelectedClient(null);
-        fetchClients();
+        setSelectedAddress(null);
+        fetchAddresss();
     };
 
-    const closeClientModal = () => {
-        setClientModalOpen(false);
+    const closeAddressModal = () => {
+        setAddressModalOpen(false);
     };
+
     return (
         <div>
-            <Breadcrumb>
-                <BreadcrumbList>
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href="/clients">Clientes</BreadcrumbLink>
-                    </BreadcrumbItem>
-                </BreadcrumbList>
-            </Breadcrumb>
-            <h1 className="text-2xl font-bold mb-4">Gestión de Clientes</h1>
+            
             <button
-                onClick={openClientModal}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                onClick={openAddressModal}
+                className="px-4 py-2 mt-4 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
             >
-                Agregar Cliente
+                Agregar Dirección
             </button>
-            <Modal isOpen={isClientModalOpen} onClose={closeClientModal}>
-                <ClientForm onClose={closeClientModal} onClientAdded={fetchClients} />
+            <Modal isOpen={isAddressModalOpen} onClose={closeAddressModal}>
+                <AddressForm onClose={closeAddressModal} onAddressAdded={fetchAddresss} client={client} />
             </Modal>
 
-            <div className="mx-auto py-10">
+            <div className="container mx-auto py-5">
                 <input
                     type="text"
                     placeholder="Buscar..."
@@ -208,8 +234,8 @@ const Clients: React.FC = () => {
                 />
                 <DataTable columns={columns} data={filteredData} />
             </div>
-            {isEditModalOpen && selectedClient && (
-                <EditClientModal client={selectedClient} onClose={handleModalClose} />
+            {isEditModalOpen && selectedAddress && (
+                <EditAddressModal addressRecord={selectedAddress} onClose={handleModalClose} />
             )}
             { }
         </div>
@@ -218,4 +244,4 @@ const Clients: React.FC = () => {
     );
 };
 
-export default Clients;
+export default Addresses;
