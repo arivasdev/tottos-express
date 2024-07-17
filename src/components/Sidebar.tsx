@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/supabaseClient';
 import { FaUserCog, FaChevronDown, FaChevronRight, FaTruck } from 'react-icons/fa';
 import { BiCategory } from 'react-icons/bi';
+import { MdCardTravel } from "react-icons/md";
 
 const Sidebar: React.FC = () => {
     const [openOption, setOpenOption] = useState("");
@@ -39,6 +40,9 @@ const Sidebar: React.FC = () => {
                         </li>
                         <li className="p-2 hover:bg-gray-700">
                             <Link to="/settings/delivery-routes"className='flex items-center justify-start'><FaTruck  className='mr-2'/> Rutas de Entrega</Link>
+                        </li>
+                        <li className="p-2 hover:bg-gray-700">
+                            <Link to="/settings/travelers"className='flex items-center justify-start'><MdCardTravel  className='mr-2'/>Viajeros</Link>
                         </li>
                     </div>
 
