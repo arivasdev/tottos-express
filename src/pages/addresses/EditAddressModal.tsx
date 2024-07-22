@@ -4,28 +4,15 @@ import { useToast } from "@/components/ui/use-toast"
 import DeliveryRoute from '@/interfaces/deliveryRoute';
 import Country from '@/interfaces/country';
 import { add } from 'date-fns';
+import Address from '@/interfaces/address';
 
-interface Address {
-  id: string;
-  country_id: string;
-  route_id: string;
-  address: string;
-  isActive: boolean;
-  client_id: string;
-  Countries: {
-    name: string;
-  };
-  DeliveryRoutes: {
-    name: string;
-  };
-}
 
 interface Props {
   addressRecord: Address;
   onClose: () => void;
 }
 
-const EditClientModal: React.FC<Props> = ({ addressRecord, onClose }) => {
+const EditAddressModal: React.FC<Props> = ({ addressRecord, onClose }) => {
   const [countryId, setCountryId] = useState(addressRecord.country_id);
   const [routeId, setRouteId] = useState(addressRecord.route_id);
   const [address, setAddress] = useState(addressRecord.address);
@@ -190,4 +177,4 @@ const EditClientModal: React.FC<Props> = ({ addressRecord, onClose }) => {
   );
 };
 
-export default EditClientModal;
+export default EditAddressModal;
