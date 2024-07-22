@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaUserCog, FaBoxOpen, FaTruck } from 'react-icons/fa';
+import { FaUserCog, FaBoxOpen, FaTruck, FaSuitcaseRolling } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const Settings: React.FC = () => {
@@ -26,6 +26,13 @@ const Settings: React.FC = () => {
                         <FaTruck className="text-4xl text-red-500 mb-4" />
                         <h2 className="text-xl font-bold mb-2">Rutas de Entrega</h2>
                         <p className="text-gray-600">Gestiona las rutas de entrega disponibles en cada país.</p>
+                    </div>
+                </Link>
+                <Link to="/settings/maletas">
+                    <div className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center text-center">
+                        <FaSuitcaseRolling className="text-4xl text-gray-500 mb-4" />
+                        <h2 className="text-xl font-bold mb-2">Maletas</h2>
+                        <p className="text-gray-600">Gestiona información de las maletas (Dimensiones, Peso Tara y Peso Máximo).</p>
                     </div>
                 </Link>
             </div>
