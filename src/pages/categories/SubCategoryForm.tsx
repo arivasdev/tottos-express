@@ -112,7 +112,7 @@ const SubCategoryForm: React.FC<SubCategoryFormProps> = ({ categoryId, onClose, 
 
             <button
                 onClick={addSubCategory}
-                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:bg-green-600"
+                className="btn-success"
             >
                 { subCategory ? "Guardar Cambios" : "Agregar Subcategoría"}
             </button>

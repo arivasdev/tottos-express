@@ -125,7 +125,7 @@ const DeliveryRoutes: React.FC = () => {
             />
             <button
               onClick={addRoute}
-              className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:bg-green-600"
+              className="btn-success mb-4 mt-2"
             >
               Agregar Ruta
             </button>
@@ -153,8 +153,8 @@ const DeliveryRoutes: React.FC = () => {
                   <button
                     onClick={() => toggleRouteStatus(route.id)}
                     className={`mt-2 px-4 py-2 rounded ${
-                      route.isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
-                    } text-white focus:outline-none`}
+                      route.isActive ? 'btn-danger' : 'btn-success'
+                    }`}
                   >
                     {route.isActive ? 'Desactivar Ruta' : 'Activar Ruta'}
                   </button>
