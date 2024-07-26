@@ -81,22 +81,22 @@ const MaletasList: React.FC = () => {
                 return (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <Button variant="ghost" className="h-8 w-8 p-0 focus:outline-none">
                                 <span className="sr-only">Abrir menu</span>
                                 <MoreHorizontal className="h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className='rounded-md border bg-white shadow-md' align="end">
-                            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                            <DropdownMenuItem className='hover:bg-gray-200'
-                                onClick={() => handleEditClick(maleta)}
+                        <DropdownMenuContent align="start" className='rounded-md bg-white shadow-lg z-10 absolute right-0'>
+                            <DropdownMenuLabel className='px-4 py-2 text-gray-500 text-sm'>Acciones</DropdownMenuLabel>
+                            <DropdownMenuItem className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                            onClick={() => handleEditClick(maleta)}
                             >
                                 Editar
                             </DropdownMenuItem>
 
-                            <DropdownMenuSeparator />
+                            <DropdownMenuSeparator className='border-t border-gray-200' />
                             <Link to={`/addresses/${row.id}`} state={{ maleta: maleta }}>
-                                <DropdownMenuItem className='hover:bg-gray-200'>
+                                <DropdownMenuItem className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900'>
                                     Ver Direcciones
                                 </DropdownMenuItem>
                             </Link>
@@ -149,7 +149,7 @@ const MaletasList: React.FC = () => {
         <div>
             <button
                 onClick={openMaletaModal}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                className="btn-success mb-6"
             >
                 Agregar Maleta
             </button>
