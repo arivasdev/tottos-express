@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/supabaseClient';
 import { FaUserCog, FaChevronDown, FaChevronRight, FaTruck, FaSuitcaseRolling } from 'react-icons/fa';
 import { BiCategory } from 'react-icons/bi';
+import { MdCardTravel } from "react-icons/md";
 
 const Sidebar: React.FC = () => {
     const [configOpen, setConfigOpen] = useState(false);
@@ -27,7 +28,7 @@ const Sidebar: React.FC = () => {
                         <Link to="/settings"  className='flex items-center'>{configOpen ? <FaChevronDown className='mr-2'/> : <FaChevronRight className='mr-2'/>}<strong>Configuración</strong></Link>
                     </li>
                     <div
-                        className={`pl-4 overflow-hidden transition-all duration-500 ease-in-out ${configOpen ? 'max-h-40' : 'max-h-0'
+                        className={`pl-4 overflow-hidden transition-all duration-500 ease-in-out ${configOpen ? 'max-h-50' : 'max-h-0'
                             }`}
                     >
                         <li className="p-2 hover:bg-gray-700">
@@ -41,6 +42,9 @@ const Sidebar: React.FC = () => {
                         </li>
                         <li className="p-2 hover:bg-gray-700">
                             <Link to="/settings/maletas" className='flex items-center justify-start'><FaSuitcaseRolling  className='mr-2'/> Maletas</Link>
+                        </li>
+                        <li className="p-2 hover:bg-gray-700">
+                            <Link to="/settings/viajeros"className='flex items-center justify-start'><MdCardTravel  className='mr-2'/>Viajeros</Link>
                         </li>
                     </div>
 
