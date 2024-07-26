@@ -22,7 +22,7 @@ const useViajerosForm = () => {
         };
     }
 
-    const { register, handleSubmit, formState: { errors }, setError, setValue,watch } = useForm<Viajero>({ resolver });
+    const { register, handleSubmit, formState: { errors } } = useForm<Viajero>({ resolver });
 
     const onSave = (afterSaveOrUpdate: () => void) => handleSubmit(async ({name,alias}) => {
         try {

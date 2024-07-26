@@ -1,8 +1,7 @@
 import { DataTable } from '@/components/DataTable';
 import { ViajeroColumns, Viajero } from '@/interfaces/viajero';
 import { Button } from '@/components/ui/Button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { Link } from 'react-router-dom';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/utils/dateUtil';
 import { MoreHorizontal } from 'lucide-react';
