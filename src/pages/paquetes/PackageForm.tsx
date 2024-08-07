@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TiposPaquetes, MetodosEntrega } from "@/types/DBEnum.type";
 import { ClientModal } from '@/components/ClientModal';
 import { Switch } from '@/components/ui/switch';
@@ -6,6 +6,9 @@ import { CountrySelect } from '@/components/CountrySelect';
 import { CategorySubcategorySelect } from '@/components/CategorySubcategorySelect';
 import { Paquete } from '@/interfaces/paquetes';
 import usePaquetesForm from './usePaquetesForm';
+import { Combobox } from '@/components/ui/combobox';
+import Client from '@/interfaces/client';
+import { supabase } from '@/supabaseClient';
 interface PaquetesFormProps {
     afterSaveOrUpdate: () => void;
     selectedPaquete: Paquete | null;
@@ -39,6 +42,21 @@ const PackageForm: React.FC<PaquetesFormProps> = ({ afterSaveOrUpdate, selectedP
         pagadoPorAdelantado: false,
     });
 
+    const [clients, setClients] = useState<Client[]>([]);
+
+    useEffect(() => {
+        fetchClients();
+    }, []);
+
+    const fetchClients = async () => {
+        const { data, error } = await supabase.from<Client>('Clients').select('*').order('name', { ascending: true });
+        if (error) {
+            console.error('Error fetching clients:', error);
+        } else {
+            setClients(data || []);
+        }
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setPackageData({ ...packageData, [name]: value });
@@ -54,7 +72,7 @@ const PackageForm: React.FC<PaquetesFormProps> = ({ afterSaveOrUpdate, selectedP
         <form onSubmit={(values) => operation(afterSaveOrUpdate)(values)}>
             <div className="mb-4">
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">Tipo de Servicio</label>
-                <select name="tipoItem" value={packageData.tipoItem} onChange={handleChange}>
+                <select className="w-[200px] justify-between" name="tipoItem" value={packageData.tipoItem} onChange={handleChange}>
                     {Object.values(TiposPaquetes).map((tipo) => (
                         <option key={tipo} value={tipo}>
                             {tipo}
@@ -76,7 +94,7 @@ const PackageForm: React.FC<PaquetesFormProps> = ({ afterSaveOrUpdate, selectedP
             <div className="mb-4">
                 <label htmlFor="from_client" className="block text-sm font-medium text-gray-700">Cliente Origen</label>
                 <ClientModal name="from_client" value={packageData.from_client} onChange={handleChange} />
-
+                <Combobox items={clients} sustantivo='Cliente Origen'/>
             </div>
             <div className="mb-4">
                 <label htmlFor="destination_country_id" className="block text-sm font-medium text-gray-700">Destino</label>
