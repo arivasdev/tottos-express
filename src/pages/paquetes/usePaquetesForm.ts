@@ -23,7 +23,7 @@ const usePaquetesForm = () => {
         };
     }
 
-    const { register, handleSubmit, formState: { errors } } = useForm<Paquete>({ resolver });
+    const { register, handleSubmit, formState: { errors }, watch } = useForm<Paquete>({ resolver });
 
     const onSave = (afterSaveOrUpdate: () => void) => handleSubmit(async (paquete: Paquete) => {
         try {
@@ -67,7 +67,7 @@ const usePaquetesForm = () => {
 
 
 
-    return { register, onSave,onUpdate, errors };
+    return { register, onSave,onUpdate, errors, watch };
 }
 
 

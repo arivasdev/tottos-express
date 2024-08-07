@@ -16,7 +16,7 @@ interface PaquetesFormProps {
 
 const PackageForm: React.FC<PaquetesFormProps> = ({ afterSaveOrUpdate, selectedPaquete }) => {
 
-    const { register, onSave, onUpdate, errors } = usePaquetesForm();
+    const { register, onSave, onUpdate, errors, watch } = usePaquetesForm();
 
     const operation = selectedPaquete ? onUpdate : onSave;
 
@@ -72,7 +72,9 @@ const PackageForm: React.FC<PaquetesFormProps> = ({ afterSaveOrUpdate, selectedP
         <form onSubmit={(values) => operation(afterSaveOrUpdate)(values)}>
             <div className="mb-4">
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">Tipo de Servicio</label>
-                <select className="w-[200px] justify-between" name="tipoItem" value={packageData.tipoItem} onChange={handleChange}>
+                <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                name="tipoItem" 
+                value={packageData.tipoItem} onChange={handleChange}>
                     {Object.values(TiposPaquetes).map((tipo) => (
                         <option key={tipo} value={tipo}>
                             {tipo}
@@ -94,7 +96,7 @@ const PackageForm: React.FC<PaquetesFormProps> = ({ afterSaveOrUpdate, selectedP
             <div className="mb-4">
                 <label htmlFor="from_client" className="block text-sm font-medium text-gray-700">Cliente Origen</label>
                 <ClientModal name="from_client" value={packageData.from_client} onChange={handleChange} />
-                <Combobox items={clients} sustantivo='Cliente Origen'/>
+                <Combobox items={clients} sustantivo='Cliente Origen' onSelect={handleChange}/>
             </div>
             <div className="mb-4">
                 <label htmlFor="destination_country_id" className="block text-sm font-medium text-gray-700">Destino</label>

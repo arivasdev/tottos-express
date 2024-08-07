@@ -1,9 +1,8 @@
+import * as React from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
 
-import * as React from "react"
-import { Check, ChevronsUpDown } from "lucide-react"
-
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/Button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 import {
     Command,
     CommandEmpty,
@@ -11,69 +10,74 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
+
+interface Item {
+    id: string;
+    name: string;
+    [key: string]: any;
+}
 
 interface ComboProps {
-    items: Array<any>,
-    idField?: string,
-    labelField?: string,
-    sustantivo?: string
+    items: Array<Item>;
+    idField?: string;
+    labelField?: string;
+    sustantivo?: string;
+    onSelect?: (item: any) => void;
 }
-export function Combobox({ items, idField, labelField, sustantivo }: ComboProps) {
-    const [open, setOpen] = React.useState(false)
-    const [value, setValue] = React.useState("")
+
+export function Combobox({ items, idField = "id", labelField = "name", sustantivo = "un Elemento",onSelect }: ComboProps) {
+    const [open, setOpen] = React.useState(false);
+    const [value, setValue] = React.useState("");
+
+    const selectedItem = items.find((item) => item[idField] === value);
+    const displayValue = selectedItem ? selectedItem[labelField] : `Selecciona ${sustantivo}...`;
+
     return (
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover open={open} onOpenChange={setOpen} >
             <PopoverTrigger asChild>
-                {/* <FormControl> */}
                 <Button
                     variant="outline"
-                    role="combobox"
-
                     aria-expanded={open}
                     className={cn(
                         "w-[200px] justify-between",
                         !value && "text-muted-foreground"
                     )}
                 >
-                    {value
-                        ? items.find(
-                            (item) => item[idField ?? "id"] === value
-                        )[labelField ?? "name"]
-                        : `Selecciona ${sustantivo ?? "un Elemento"}...`}
+                    {displayValue}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
-                {/* </FormControl> */}
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
                 <Command>
-                    <CommandInput placeholder={`Selecciona ${sustantivo ?? "un Elemento"}...`} />
-                    <CommandList aria-disabled={false}>
+                    <CommandInput placeholder={`Selecciona ${sustantivo}...`} />
+                    <CommandList>
                         <CommandEmpty>No hay resultados.</CommandEmpty>
-                        <CommandGroup aria-disabled={false}>
+                        <CommandGroup>
                             {items.map((item) => (
                                 <CommandItem
-                                    value={item[labelField ?? "name"]}
-                                    key={item[idField ?? "id"]}
+                                    value={item[labelField]}
+                                    key={item[idField]}
                                     onSelect={() => {
-                                        setValue(item[idField ?? "id"]);
+                                        onSelect && onSelect({target : {name: idField, value: item[idField]}});
+                                        setValue(item[idField]);
                                         setOpen(false);
                                     }}
                                 >
                                     <Check
                                         className={cn(
                                             "mr-2 h-4 w-4",
-                                            item[idField ?? "id"] === value
+                                            item[idField] === value
                                                 ? "opacity-100"
                                                 : "opacity-0"
                                         )}
                                     />
-                                    {item[labelField ?? "name"]}
+                                    {item[labelField]}
                                 </CommandItem>
                             ))}
                         </CommandGroup>
@@ -81,5 +85,5 @@ export function Combobox({ items, idField, labelField, sustantivo }: ComboProps)
                 </Command>
             </PopoverContent>
         </Popover>
-    )
+    );
 }
