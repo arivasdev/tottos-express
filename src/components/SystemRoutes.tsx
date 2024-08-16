@@ -22,7 +22,7 @@ export default function SystemRoutes() {
             <Route path="/addresses/:id" element={<AddressPage />} />
             <Route path="/settings/maletas" element={<MaletasPage />} />
             <Route path="/settings/viajeros" element={<ViajerosPage />} />
-            {/* <Route path="/packages" element={<PackageForm />} /> */}
+            <Route path="/packages" element={<PackageForm />} />
         </Routes>
     )
 }
