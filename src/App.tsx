@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import './App.css'
 import { supabase } from '@/supabaseClient';
 import { Session } from '@supabase/supabase-js';
 import { LoginForm } from '@/components/login/LoginForm'

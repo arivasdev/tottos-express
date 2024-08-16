@@ -3,12 +3,12 @@ import { supabase } from '@/supabaseClient';
 import { useToast } from '@/components/ui/use-toast';
 import { useUserStore } from '@/store/user.store';
 
-interface Props {
+interface MaletaProps {
   onMaletaAdded: () => void;
   onClose: () => void;
 }
 
-const MaletaForm: React.FC<Props> = ({ onMaletaAdded, onClose }) => {
+const MaletaForm: React.FC<MaletaProps> = ({ onMaletaAdded, onClose }) => {
   const [name, setName] = useState('');
   const [pesoTara, setPesoTara] = useState('');
   const [pesoMax, setPesoMax] = useState('');

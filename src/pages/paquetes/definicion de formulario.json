@@ -1,0 +1,95 @@
+[
+  {
+    "column_name": "tipoItem",
+    "label": "Tipo de Servicio",
+    "comportamiento_EnFormulario": "sin cambios"
+  },
+  {
+    "column_name": "item_recibido",
+    "label": "Item Recibido (Deja sin seleccionar si no lo has recibido)",
+    "comportamiento_EnFormulario": "Utiliza un control toggle"
+  },
+  {
+    "column_name": "origin_country_id",
+    "label": "Origen",
+    "comportamiento_EnFormulario": "Pais de Origen seleccionable. Referencia a la tabla Country."
+  },
+  {
+    "column_name": "from_client",
+    "label": "Cliente Origen",
+    "comportamiento_EnFormulario": "Abrir un modal para seleccionar un cliente de la tabla Clients"
+  },
+  {
+    "column_name": "destination_country_id",
+    "label": "Destino",
+    "comportamiento_EnFormulario": "Seleccionable. Referencia a la tabla Country."
+  },
+  {
+    "column_name": "to_client",
+    "label": "Cliente Destino",
+    "comportamiento_EnFormulario": "Abrir un modal para seleccionar un cliente de la tabla Clients"
+  },
+  {
+    "column_name": "metodoEntrega",
+    "label": "Método de Entrega",
+    "comportamiento_EnFormulario": "sin cambios"
+  },
+  {
+    "column_name": "direccionEntrega",
+    "label": "Dirección de Entrega",
+    "comportamiento_EnFormulario": "Obtener la dirección que tenga 'defaultAddress' = true en la tabla Client_Address, filtrando por la columna client_id con el valor id del to_Client seleccionado" 
+  },
+  {
+    "column_name": "subCategory_id",
+    "label": "Sub Categoría",
+    "comportamiento_EnFormulario": "Para seleccionar esto, debe poder seleccionar primero la categoría para filtrar las sub-categorías disponibles"
+  },
+  {
+    "column_name": "producto",
+    "comportamiento_EnFormulario": "sin cambios"
+  },
+  {
+    "column_name": "unidades",
+    "label": "Unidades",
+    "comportamiento_EnFormulario": "solo validar que sea un número"
+  },
+  {
+    "column_name": "peso",
+    "label": "Peso",
+    "comportamiento_EnFormulario": "solo validar que sea un número"
+  },
+  {
+    "column_name": "totalFactura",
+    "label": "Total en Factura",
+    "comportamiento_EnFormulario": "numero de dos posiciones decimales. Es un valor monetario"
+  },
+  {
+    "column_name": "totalCobro",
+    "label": "Total a cobrar",
+    "comportamiento_EnFormulario": "la subCategoría (el nombre de la tabla es SubCategories) tiene un campo que se llama isCobroPorPeso. Si ese valor es true, entonces redondear el peso al entero inmediato superior y multiplicarlo por el campo tarifa de la tabla SubCategories. Si isCobroPorPeso es false, multiplicar tarifa por la cantidad de unidades."
+  },
+  {
+    "column_name": "totalCambiado",
+    "comportamiento_EnFormulario": "NO MOSTRAR EN EL FORMULARIO. Pero, asignar a true si el campo totalCobro es cambiado o es diferente al cálculo propuesto"
+  },
+  {
+    "column_name": "totalCambiadoFecha",
+    "comportamiento_EnFormulario": "NO MOSTRAR EN EL FORMULARIO. Pero, asignar a la fecha y hora actual si el campo totalCobro es cambiado o es diferente al cálculo propuesto"
+  },
+  {
+    "column_name": "usuario_modificaTotal",
+    "comportamiento_EnFormulario": "NO MOSTRAR EN EL FORMULARIO. Pero, asignar al id de usuario actual si el campo totalCobro es cambiado o es diferente al cálculo propuesto. La propiedad id (del usuario) se obtiene del objeto user, definido así: const { user } = useUserStore();"
+  },
+  {
+    "column_name": "totalCobroOriginal",
+    "comportamiento_EnFormulario": "NO MOSTRAR EN EL FORMULARIO. Pero asignar el total calculado de ser modificado manualmente."
+  },
+  {
+    "column_name": "created_by",
+    "comportamiento_EnFormulario": "NO MOSTRAR EN EL FORMULARIO. Asignar el id del usuario actual."
+  },
+  {
+    "column_name": "pagadoPorAdelantado",
+    "comportamiento_EnFormulario": "Utiliza un control toggle"
+  }
+]

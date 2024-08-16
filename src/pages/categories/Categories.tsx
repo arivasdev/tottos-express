@@ -3,12 +3,7 @@ import { supabase } from '../../supabaseClient';
 import CategoryForm from './CategoryForm';
 import SubCategories from './SubCategories';
 import Modal from '@/components/Modal';
-
-interface Category {
-  id: string;
-  name: string;
-  isActive: boolean;
-}
+import Category from '@/interfaces/category';
 
 const Categories: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
