@@ -31,21 +31,8 @@ import { ColumnDef } from "@tanstack/react-table"
 import Client from '@/interfaces/client';
 import ClientInfo from '../clients/ClientInfo';
 import { useLocation } from 'react-router-dom';
+import Address from '@/interfaces/address';
 
-
-interface Address {
-    id: string;
-    country_id: string;
-    route_id: string;
-    address: string;
-    isActive: boolean;
-    Countries: {
-        name: string;
-    };
-    DeliveryRoutes: {
-        name: string;
-    };
-}
 interface props {
     client: Client;
 }

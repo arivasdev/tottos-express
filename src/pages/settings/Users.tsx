@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import { format } from 'date-fns';
+import { Button } from '@/components/ui/Button';
 
 interface User {
     id: string;
@@ -131,7 +132,7 @@ const Users: React.FC = () => {
             email: newUserEmail,
             password: newPassword,
         });
-        
+
 
         if (error) {
             console.error('Error creating user:', error);
@@ -161,10 +162,10 @@ const Users: React.FC = () => {
 
     return (
         <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Usuarios y Permisos</h1>
+            <h1 className="text-2xl font-bold mb-4">Usuarios y permisos</h1>
             <button
                 onClick={openCreateUserModal}
-                className="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:bg-green-600"
+                className="btn-success mb-10"
             >
                 Crear Usuario
             </button>
@@ -180,7 +181,7 @@ const Users: React.FC = () => {
                             <p>Fecha de Creación: {formatDate(user.created_at)}</p>
                             <button
                                 onClick={() => openModal(user)}
-                                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                                className="btn-info mt-2"
                             >
                                 Administrar Roles
                             </button>
@@ -192,7 +193,7 @@ const Users: React.FC = () => {
             {selectedUser && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
-                        <h1 className="text-2xl font-bold mb-4">Administrar Roles para {selectedUser.name}</h1>
+                        <h1 className="text-2xl font-bold mb-4">Administrar roles para {selectedUser.name}</h1>
                         <div className="grid grid-cols-3 gap-4">
                             {roles.map((role) => (
                                 <div
@@ -207,7 +208,7 @@ const Users: React.FC = () => {
                         </div>
                         <button
                             onClick={closeModal}
-                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                            className="btn-dark mt-4 float-right"
                         >
                             Cerrar
                         </button>
@@ -218,7 +219,7 @@ const Users: React.FC = () => {
             {isCreateUserModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
-                        <h1 className="text-2xl font-bold mb-4">Crear Nuevo Usuario</h1>
+                        <h1 className="text-2xl font-bold mb-4">Crear nuevo usuario</h1>
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
                             <input
@@ -226,6 +227,7 @@ const Users: React.FC = () => {
                                 value={newUserName}
                                 onChange={(e) => setNewUserName(e.target.value)}
                                 className="w-full p-2 border border-gray-300 rounded"
+                                autoComplete='off'
                             />
                         </div>
                         <div className="mb-4">
@@ -235,6 +237,7 @@ const Users: React.FC = () => {
                                 value={newUserEmail}
                                 onChange={(e) => setNewUserEmail(e.target.value)}
                                 className="w-full p-2 border border-gray-300 rounded"
+                                autoComplete='off'
                             />
                         </div>
                         <div className="mb-4">
@@ -244,20 +247,23 @@ const Users: React.FC = () => {
                                 value={newPassword}
                                 onChange={(e) => setNewPassord(e.target.value)}
                                 className="w-full p-2 border border-gray-300 rounded"
+                                autoComplete='off'
                             />
                         </div>
-                        <button
-                            onClick={createUser}
-                            className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:bg-green-600"
-                        >
-                            Crear
-                        </button>
-                        <button
-                            onClick={closeCreateUserModal}
-                            className="mt-4 ml-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 focus:outline-none focus:bg-gray-600"
-                        >
-                            Cancelar
-                        </button>
+                        <span className='float-right'>
+                            <button
+                                onClick={createUser}
+                                className="btn-success "
+                            >
+                                Crear
+                            </button>
+                            <button
+                                onClick={closeCreateUserModal}
+                                className="btn-dark "
+                            >
+                                Cancelar
+                            </button>
+                        </span>
                     </div>
                 </div>
             )}

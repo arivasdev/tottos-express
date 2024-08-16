@@ -3,12 +3,7 @@ import { supabase } from '../../supabaseClient';
 import CategoryForm from './CategoryForm';
 import SubCategories from './SubCategories';
 import Modal from '@/components/Modal';
-
-interface Category {
-  id: string;
-  name: string;
-  isActive: boolean;
-}
+import Category from '@/interfaces/category';
 
 const Categories: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -64,7 +59,7 @@ const Categories: React.FC = () => {
         <h1 className="text-2xl font-bold mb-4">Categorías</h1>
         <button
           onClick={openCategoryModal}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+          className="btn-success"
         >
           Agregar Categoría
         </button>
@@ -99,14 +94,14 @@ const Categories: React.FC = () => {
                   <div className="flex flex-col-reverse items-end">
                     <button
                       onClick={() => toggleCategoryStatus(category.id)}
-                      className={`mt-2 px-4 py-1 rounded ${category.isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
+                      className={`text-center mt-2 w-full ${category.isActive ? 'btn-danger' : 'btn-success'
                         } text-white`}
                     >
                       {category.isActive ? 'Desactivar' : 'Activar'}
                     </button>
                     <button
                       onClick={() => setSelectedCategory(category.id)}
-                      className="mt-2 px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                      className="btn-info w-full"
                     >
                       Ver Subcategorías
                     </button>

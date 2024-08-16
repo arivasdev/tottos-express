@@ -1,6 +1,7 @@
 export type FormValues = {
     email : string;
     password: string;
+    remember_me: boolean;
 }
 
 export type ValidationError = {

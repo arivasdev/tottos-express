@@ -105,7 +105,7 @@ const SubCategories: React.FC<Props> = ({ categoryId }) => {
             <h2 className="text-xl font-bold mb-4">Subcategorías de: {category?.name}</h2>
             <button
                 onClick={agregar}
-                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:bg-green-600"
+                className="btn-success"
             >
                 Agregar Subcategoría
             </button>
@@ -141,13 +141,13 @@ const SubCategories: React.FC<Props> = ({ categoryId }) => {
                                 <div className="flex flex-col items-end justify-center">
                                     <button
                                         onClick={() => editar(subCategory)}
-                                        className={`mt-2 px-4 py-2 rounded outline outline-offset-2 outline-cyan-500 text-black`}
+                                        className={`btn-info w-full`}
                                     >
                                         Editar
                                     </button>
                                     <button
                                         onClick={() => toggleSubCategoryStatus(subCategory.id)}
-                                        className={`mt-2 px-4 py-2 rounded ${subCategory.isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
+                                        className={`mt-2 w-full ${subCategory.isActive ? 'btn-danger' : 'btn-success'
                                             } text-white`}
                                     >
                                         {subCategory.isActive ? 'Desactivar' : 'Activar'}
