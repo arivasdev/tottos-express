@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '@/supabaseClient';
 import { useToast } from "@/components/ui/use-toast"
-import Client from '@/interfaces/client';
+import {Client , MetodoPreferido } from '@/interfaces/client';
 
 
 
@@ -10,11 +10,12 @@ interface Props {
   onClose: () => void;
 } 
 
+
 const EditClientModal: React.FC<Props> = ({ client, onClose }) => {
   const [email, setEmail] = useState(client.email);
   const [name, setName] = useState(client.name);
   const [phoneNumber, setPhoneNumber] = useState(client.phone_number);
-  const [metodoPreferido, setMetodoPreferido] = useState<'Retiro en Sitio' | 'Domicilio'>(client.metodo_preferido);
+  const [metodoPreferido, setMetodoPreferido] = useState<MetodoPreferido>(client.metodo_preferido);
   const { toast } = useToast()
 
   const updateClient = async () => {
@@ -81,7 +82,7 @@ const EditClientModal: React.FC<Props> = ({ client, onClose }) => {
           <label className="block text-sm font-medium text-gray-700 mb-2">Método Preferido</label>
           <select
             value={metodoPreferido}
-            onChange={(e) => setMetodoPreferido(e.target.value as 'Retiro en Sitio' | 'Domicilio')}
+            onChange={(e) => setMetodoPreferido(e.target.value as MetodoPreferido)}
             className="w-full p-2 border border-gray-300 rounded"
           >
             <option value="Retiro en Sitio">Retiro en Sitio</option>

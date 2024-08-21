@@ -5,6 +5,12 @@ import SubCategories from './SubCategories';
 import Modal from '@/components/Modal';
 import Category from '@/interfaces/category';
 
+interface SupabaseResponse<T> {
+    data?: T[] | null;
+    error: any | null;
+}
+
+
 const Categories: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -21,7 +27,7 @@ const Categories: React.FC = () => {
   };
   useEffect(() => {
     const fetchCategories = async () => {
-      const { data, error } = await supabase.from<Category>('Categories').select('*');
+      const { data, error } : SupabaseResponse<Category> = await supabase.from('Categories').select('*');
       if (error) {
         console.error('Error fetching categories:', error);
       } else {
@@ -43,7 +49,7 @@ const Categories: React.FC = () => {
       if (error) {
         console.error('Error updating category status:', error);
       } else {
-        const { data, error: fetchError } = await supabase.from<Category>('Categories').select('*');
+        const { data, error: fetchError } : SupabaseResponse<Category>= await supabase.from('Categories').select('*');
         if (fetchError) {
           console.error('Error fetching categories:', fetchError);
         } else {

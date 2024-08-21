@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import SubCategoryForm from './SubCategoryForm';
 import Modal from '@/components/Modal';
-
-interface SubCategory {
-    id: string;
-    name: string;
-    categoryId: string;
-    isCobroPorPeso: boolean;
-    tarifa: number;
-    isActive: boolean;
-}
+import { SubCategory } from '@/interfaces/subcategory';
+// interface SubCategory {
+//     id: string;
+//     name: string;
+//     categoryId: string;
+//     isCobroPorPeso: boolean;
+//     tarifa: number;
+//     isActive: boolean;
+// }
 
 interface Props {
     categoryId: string;
@@ -22,6 +22,11 @@ interface Category {
     isActive: boolean;
 }
 
+interface SupabaseResponse<T> {
+    data?: T[] | null;
+    error: any | null;
+}
+
 const SubCategories: React.FC<Props> = ({ categoryId }) => {
     const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
     const [category, setCategory] = useState<Category>();
@@ -31,8 +36,8 @@ const SubCategories: React.FC<Props> = ({ categoryId }) => {
 
     useEffect(() => {
         const fetchSubCategories = async () => {
-            const { data, error } = await supabase
-                .from<SubCategory>('SubCategories')
+            const { data, error } : SupabaseResponse<SubCategory> = await supabase
+                .from('SubCategories')
                 .select('*')
                 .eq('categoryId', categoryId);
             if (error) {
@@ -45,19 +50,18 @@ const SubCategories: React.FC<Props> = ({ categoryId }) => {
         fetchSubCategories();
 
         const fetchCategory = async () => {
-            const { data, error } = await supabase.from<Category>('Categories').select('*').eq("id", categoryId);
+            const { data, error } : SupabaseResponse<Category> = await supabase.from('Categories').select('*').eq("id", categoryId);
             if (error) {
                 console.error('Error fetching single category:', error);
             } else {
-                if (data.length > 0)
-                    setCategory(data[0]);
+                if (data && data.length > 0) setCategory(data[0]);
             }
         };
 
         fetchCategory();
     }, [categoryId]);
 
-    const toggleSubCategoryStatus = async (subCategoryId: string) => {
+    const toggleSubCategoryStatus = async (subCategoryId: number) => {
         const subCategory = subCategories.find((sc) => sc.id === subCategoryId);
         if (subCategory) {
             const { error } = await supabase
@@ -68,8 +72,8 @@ const SubCategories: React.FC<Props> = ({ categoryId }) => {
             if (error) {
                 console.error('Error updating subcategory status:', error);
             } else {
-                const { data, error: fetchError } = await supabase
-                    .from<SubCategory>('SubCategories')
+                const { data, error: fetchError } : SupabaseResponse<SubCategory> = await supabase
+                    .from('SubCategories')
                     .select('*')
                     .eq('categoryId', categoryId);
                 if (fetchError) {

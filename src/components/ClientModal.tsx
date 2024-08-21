@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 
-import Client from '@/interfaces/client';
+import { Client } from '@/interfaces/client';
 import { supabase } from '@/supabaseClient';
-import { Dialog, DialogContent, DialogHeader } from './ui/dialog';
+import { Dialog, DialogContent } from './ui/dialog';
 import { DialogTitle } from '@radix-ui/react-dialog';
 
 interface ClientModalProps {
     name: string;
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+}
+
+interface SupabaseResponse<T> {
+    data?: T[] | null;
+    error: any | null;
 }
 
 export const ClientModal: React.FC<ClientModalProps> = ({ name, value, onChange }) => {
@@ -20,7 +25,7 @@ export const ClientModal: React.FC<ClientModalProps> = ({ name, value, onChange 
     }, []);
 
     const fetchClients = async () => {
-        const { data, error } = await supabase.from<Client>('Clients').select('*').order('name', { ascending: true });
+        const { data, error } : SupabaseResponse<Client> = await supabase.from('Clients').select('*').order('name', { ascending: true });
         if (error) {
             console.error('Error fetching clients:', error);
         } else {

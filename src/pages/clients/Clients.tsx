@@ -10,7 +10,6 @@ import {
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
-    BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/Button"
@@ -27,10 +26,14 @@ import { Badge } from "@/components/ui/badge"
 
 
 import { ColumnDef } from "@tanstack/react-table"
-import Client from '@/interfaces/client';
+import { Client } from '@/interfaces/client';
 import { Link } from 'react-router-dom';
 
 
+interface SupabaseResponse<T> {
+    data?: T[] | null;
+    error: any | null;
+}
 
 const Clients: React.FC = () => {
 
@@ -91,7 +94,7 @@ const Clients: React.FC = () => {
                 )
             },
             cell: ({ row }) => {
-                const metodo = row.getValue("metodo_preferido")
+                const metodo = row.getValue("metodo_preferido") as string;
 
                 return <Badge className={metodo == "Retiro en Sitio" ? "bg-teal-300" : "bg-yellow-200"} variant="outline">{metodo}</Badge>
             },
@@ -152,7 +155,7 @@ const Clients: React.FC = () => {
     }, []);
 
     const fetchClients = async () => {
-        const { data, error } = await supabase.from<Client>('Clients').select('*').order('name', { ascending: true });
+        const { data, error } : SupabaseResponse<Client> = await supabase.from('Clients').select('*').order('name', { ascending: true });
         if (error) {
             console.error('Error fetching clients:', error);
         } else {

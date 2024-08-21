@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/supabaseClient';
 import { useToast } from '@/components/ui/use-toast';
-import Client from '@/interfaces/client';
+import { Client } from '@/interfaces/client';
 import Country from '@/interfaces/country';
 import DeliveryRoute from '@/interfaces/deliveryRoute';
 
@@ -9,6 +9,10 @@ interface Props {
   onAddressAdded: () => void;
   onClose: () => void;
   client: Client;
+}
+interface SupabaseResponse<T> {
+  data?: T[] | null;
+  error: any | null;
 }
 
 const AddressForm: React.FC<Props> = ({ onAddressAdded, onClose, client }) => {
@@ -19,7 +23,7 @@ const AddressForm: React.FC<Props> = ({ onAddressAdded, onClose, client }) => {
   const [countries, setCountries] = useState<Country[]>([]);
   const [routes, setRoutes] = useState<DeliveryRoute[]>([]);
   const [defaultAddress, setDefaultAddress] = useState(true);
-  
+
 
   const { toast } = useToast()
 
@@ -38,7 +42,7 @@ const AddressForm: React.FC<Props> = ({ onAddressAdded, onClose, client }) => {
   };
 
   const fetchCountries = async () => {
-    const { data, error } = await supabase.from<Country>('Countries').select('*');
+    const { data, error }: SupabaseResponse<Country> = await supabase.from('Countries').select('*');
     if (error) {
       console.error('Error fetching Countries:', error);
     } else {
@@ -48,8 +52,8 @@ const AddressForm: React.FC<Props> = ({ onAddressAdded, onClose, client }) => {
   useEffect(() => {
     if (countryId) {
       const fetchRoutes = async () => {
-        const { data, error } = await supabase
-          .from<DeliveryRoute>('DeliveryRoutes')
+        const { data, error }: SupabaseResponse<DeliveryRoute> = await supabase
+          .from('DeliveryRoutes')
           .select('*')
           .eq('countryId', countryId);
 
@@ -79,8 +83,8 @@ const AddressForm: React.FC<Props> = ({ onAddressAdded, onClose, client }) => {
         address: address,
         created_by: currentUserId
       })
-      .select('id'); 
-      
+        .select('id');
+
       if (error) {
         console.error('Error adding Address:', error);
         toast({
@@ -96,15 +100,15 @@ const AddressForm: React.FC<Props> = ({ onAddressAdded, onClose, client }) => {
         onAddressAdded();
         onClose();
 
-        let addressid =data[0]?.id;
+        let addressid = data[0]?.id;
         let clientid = client.id;
-        if (addressid){
-          
+        if (addressid) {
+
           const { error, data } = await supabase.rpc('setDefaultAddress', {
             clientid,
             addressid
           });
-      
+
           if (error) {
             console.error('Error setting default address:', error);
           } else {

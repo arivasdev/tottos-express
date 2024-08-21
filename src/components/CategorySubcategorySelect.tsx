@@ -8,6 +8,10 @@ interface CategorySubcategorySelectProps {
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 }
+interface SupabaseResponse<T> {
+    data?: T[] | null;
+    error: any | null;
+}
 
 export const CategorySubcategorySelect: React.FC<CategorySubcategorySelectProps> = ({ name, value, onChange }) => {
     const [categories, setCategories] = useState<Category[]>([]);
@@ -17,7 +21,7 @@ export const CategorySubcategorySelect: React.FC<CategorySubcategorySelectProps>
     useEffect(() => {
         // Aquí se cargarían las categorías desde la base de datos
         const fetchCategories = async () => {
-            const { data, error } = await supabase.from<Category>('Categories').select('*');
+            const { data, error } : SupabaseResponse<Category> = await supabase.from('Categories').select('*');
             if (error) {
                 console.error('Error fetching categories:', error);
             } else {
@@ -39,8 +43,8 @@ export const CategorySubcategorySelect: React.FC<CategorySubcategorySelectProps>
         if (selectedCategory) {
             // Aquí se cargarían las subcategorías según la categoría seleccionada
             const fetchSubCategories = async () => {
-                const { data, error } = await supabase
-                    .from<SubCategory>('SubCategories')
+                const { data, error } : SupabaseResponse<SubCategory> = await supabase
+                    .from('SubCategories')
                     .select('*')
                     .eq('categoryId', selectedCategory);
                 if (error) {

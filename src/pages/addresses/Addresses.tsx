@@ -15,28 +15,24 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu"
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 
 import { Badge } from "@/components/ui/badge"
 
 
 import { ColumnDef } from "@tanstack/react-table"
-import Client from '@/interfaces/client';
-import ClientInfo from '../clients/ClientInfo';
-import { useLocation } from 'react-router-dom';
+import { Client } from '@/interfaces/client';
 import Address from '@/interfaces/address';
 
 interface props {
     client: Client;
 }
-const Addresses: React.FC<props> = ({client}) => {
+
+interface SupabaseResponse<T> {
+    data?: T[] | null;
+    error: any | null;
+}
+
+const Addresses: React.FC<props> = ({ client }) => {
 
     const columns: ColumnDef<Address>[] = [
         {
@@ -156,23 +152,23 @@ const Addresses: React.FC<props> = ({client}) => {
     }, []);
 
     const defineDefaultAddress = async (addressid: string) => {
-        const { error, data } = await supabase.rpc('setDefaultAddress', {
+        const { error } = await supabase.rpc('setDefaultAddress', {
             clientid: clientId,
             addressid
-          });
-      
-          if (error) {
+        });
+
+        if (error) {
             console.error('Error setting default address:', error);
-          } else {
-          }
+        } else {
+        }
 
         fetchAddresss();
     }
 
     const fetchAddresss = async () => {
-        const { data, error } = await supabase.from<Address>('Client_Address').select('*, Countries(name), DeliveryRoutes(name)')
+        const { data, error }: SupabaseResponse<Address> = await supabase.from('Client_Address').select('*, Countries(name), DeliveryRoutes(name)')
             .eq("client_id", client.id).order('id', { ascending: true });
-        if(!clientId)
+        if (!clientId)
             setClientId(client.id);
         if (error) {
             console.error('Error fetching Addresses:', error);
@@ -198,7 +194,7 @@ const Addresses: React.FC<props> = ({client}) => {
 
     return (
         <div>
-            
+
             <button
                 onClick={openAddressModal}
                 className="px-4 py-2 mt-4 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"

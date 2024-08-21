@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import { format } from 'date-fns';
-import { Button } from '@/components/ui/Button';
 
 interface User {
     id: string;
@@ -14,13 +13,17 @@ interface Role {
     code: string;
 }
 
+interface SupabaseResponse<T> {
+    data?: T[] | null;
+    error: any | null;
+}
+
 const Users: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [roles, setRoles] = useState<Role[]>([]); // Roles disponibles
     const [userRoles, setUserRoles] = useState<string[]>([]); // Roles del usuario seleccionado
-    const [isUserModalOpen, setIsUserModalOpen] = useState(false);
     const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
     const [newUserName, setNewUserName] = useState('');
     const [newUserEmail, setNewUserEmail] = useState('');
@@ -28,10 +31,11 @@ const Users: React.FC = () => {
 
     useEffect(() => {
         const fetchUsers = async () => {
-            const { data, error } = await supabase
-                .from<User>('Users')
+            const response : SupabaseResponse<User> = await supabase
+                .from('Users')
                 .select('id, email, name, created_at');
-
+            const { data, error } = response;
+            
             if (error) {
                 console.error('Error fetching users:', error);
             } else {
@@ -45,17 +49,17 @@ const Users: React.FC = () => {
 
     useEffect(() => {
         const fetchRoles = async () => {
-            const { data, error } = await supabase
-                .from<Role>('Roles')
+            const response : SupabaseResponse<Role> = await supabase
+                .from('Roles')
                 .select('name, code');
+            const { data, error } = response;
+
 
             if (error) {
                 console.error('Error fetching roles:', error);
             } else {
-                const roleNames = data?.map((role: Role) => ({ name: role.name, code: role.code }));
-                console.log("🚀 ~ fetchRoles ~ data:", data)
-                console.log("🚀 ~ fetchRoles ~ roleNames:", roleNames)
-                setRoles(roleNames);
+                const roleNames = data?.map((role: Role) => ({ name: role.name, code: role.code } as Role));
+                setRoles(roleNames || []);
             }
         };
 
@@ -145,8 +149,8 @@ const Users: React.FC = () => {
                 console.error('Error creating user in table:', error);
             }
             else {
-                const { data: updatedUsers, error: fetchError } = await supabase
-                    .from<User>('Users')
+                const { data: updatedUsers, error: fetchError } : SupabaseResponse<User> = await supabase
+                    .from('Users')
                     .select('id, email, name, created_at');
                 if (fetchError) {
                     console.error('Error fetching users:', fetchError);

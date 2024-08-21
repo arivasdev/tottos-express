@@ -10,6 +10,10 @@ interface SubCategoryFormProps {
     setSubCategories: React.Dispatch<React.SetStateAction<SubCategory[]>>;
     subCategory: SubCategory | null;
 }
+interface SupabaseResponse<T> {
+    data?: T[] | null;
+    error: any | null;
+}
 
 const SubCategoryForm: React.FC<SubCategoryFormProps> = ({ categoryId, onClose, setSubCategories, subCategory }) => {
     const [subCategoryName, setSubCategoryName] = useState(subCategory?.name || '');
@@ -71,7 +75,7 @@ const SubCategoryForm: React.FC<SubCategoryFormProps> = ({ categoryId, onClose, 
                 setSubCategoryName('');
                 setTarifa('0.00');
                 setIsCobroPorPeso(true);
-                const { data, error: fetchError } = await supabase.from<SubCategory>('SubCategories').select('*').eq('categoryId', categoryId);
+                const { data, error: fetchError } : SupabaseResponse<SubCategory> = await supabase.from('SubCategories').select('*').eq('categoryId', categoryId);
                 if (fetchError) {
                     console.error('Error fetching subcategories:', fetchError);
                 } else {

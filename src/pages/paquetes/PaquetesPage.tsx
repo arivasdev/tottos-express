@@ -7,12 +7,6 @@ import { Link } from 'react-router-dom';
 const PaquetesPage: React.FC = () => {
     const { paquetes } = usePaquetes();
 
-    const handleEditClick = (viajero: null) => {
-        // setSelectedViajero(viajero);
-        // setShowModal(true);
-    }
-
-
     return (
         <>
             <Breadcrumb>
@@ -40,7 +34,7 @@ const PaquetesPage: React.FC = () => {
 
 
 
-            <PaquetesTable data={paquetes} handleEditClick={handleEditClick} />
+            <PaquetesTable data={paquetes}  />
 
         </>
     );

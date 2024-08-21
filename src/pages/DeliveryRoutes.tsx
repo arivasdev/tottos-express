@@ -3,6 +3,11 @@ import { supabase } from '../supabaseClient';
 import Country from '@/interfaces/country';
 import DeliveryRoute from '@/interfaces/deliveryRoute';
 
+interface SupabaseResponse<T> {
+    data?: T[] | null;
+    error: any | null;
+}
+
 const DeliveryRoutes: React.FC = () => {
   const [countries, setCountries] = useState<Country[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
@@ -12,7 +17,7 @@ const DeliveryRoutes: React.FC = () => {
 
   useEffect(() => {
     const fetchCountries = async () => {
-      const { data, error } = await supabase.from<Country>('Countries').select('*');
+      const { data, error } : SupabaseResponse<Country> = await supabase.from('Countries').select('*');
       if (error) {
         console.error('Error fetching countries:', error);
       } else {
@@ -26,8 +31,8 @@ const DeliveryRoutes: React.FC = () => {
   useEffect(() => {
     if (selectedCountry) {
       const fetchRoutes = async () => {
-        const { data, error } = await supabase
-          .from<DeliveryRoute>('DeliveryRoutes')
+        const { data, error } : SupabaseResponse<DeliveryRoute> = await supabase
+          .from('DeliveryRoutes')
           .select('*')
           .eq('countryId', selectedCountry);
 
@@ -54,8 +59,8 @@ const DeliveryRoutes: React.FC = () => {
         console.error('Error adding route:', error);
       } else {
         setRouteName('');
-        const { data, error: fetchError } = await supabase
-          .from<DeliveryRoute>('DeliveryRoutes')
+        const { data, error: fetchError } : SupabaseResponse<DeliveryRoute> = await supabase
+          .from('DeliveryRoutes')
           .select('*')
           .eq('countryId', selectedCountry);
 
@@ -79,8 +84,8 @@ const DeliveryRoutes: React.FC = () => {
       if (error) {
         console.error('Error updating route status:', error);
       } else {
-        const { data, error: fetchError } = await supabase
-          .from<DeliveryRoute>('DeliveryRoutes')
+        const { data, error: fetchError } : SupabaseResponse<DeliveryRoute> = await supabase
+          .from('DeliveryRoutes')
           .select('*')
           .eq('countryId', selectedCountry);
 

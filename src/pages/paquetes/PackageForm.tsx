@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { TiposPaquetes, MetodosEntrega } from "@/types/DBEnum.type";
 import { ClientModal } from '@/components/ClientModal';
 import { Switch } from '@/components/ui/switch';
@@ -6,9 +6,9 @@ import { CountrySelect } from '@/components/CountrySelect';
 import { CategorySubcategorySelect } from '@/components/CategorySubcategorySelect';
 import { Paquete } from '@/interfaces/paquetes';
 import usePaquetesForm from './usePaquetesForm';
-import { Combobox } from '@/components/ui/combobox';
-import Client from '@/interfaces/client';
-import { supabase } from '@/supabaseClient';
+// import { Combobox } from '@/components/ui/combobox';
+// import { Client } from '@/interfaces/client';
+// import { supabase } from '@/supabaseClient';
 interface PaquetesFormProps {
     afterSaveOrUpdate: () => void;
     selectedPaquete: Paquete | null;
@@ -16,7 +16,7 @@ interface PaquetesFormProps {
 
 const PackageForm: React.FC<PaquetesFormProps> = ({ afterSaveOrUpdate, selectedPaquete }) => {
 
-    const { register, onSave, onUpdate, errors, watch } = usePaquetesForm();
+    const { register, onSave, onUpdate } = usePaquetesForm();
 
     const operation = selectedPaquete ? onUpdate : onSave;
 
@@ -42,20 +42,20 @@ const PackageForm: React.FC<PaquetesFormProps> = ({ afterSaveOrUpdate, selectedP
         pagadoPorAdelantado: false,
     });
 
-    const [clients, setClients] = useState<Client[]>([]);
+    // const [clients, setClients] = useState<Client[]>([]);
 
-    useEffect(() => {
-        fetchClients();
-    }, []);
+    // useEffect(() => {
+    //     fetchClients();
+    // }, []);
 
-    const fetchClients = async () => {
-        const { data, error } = await supabase.from<Client>('Clients').select('*').order('name', { ascending: true });
-        if (error) {
-            console.error('Error fetching clients:', error);
-        } else {
-            setClients(data || []);
-        }
-    };
+    // const fetchClients = async () => {
+    //     const { data, error } = await supabase.from<Client>('Clients').select('*').order('name', { ascending: true });
+    //     if (error) {
+    //         console.error('Error fetching clients:', error);
+    //     } else {
+    //         setClients(data || []);
+    //     }
+    // };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -72,9 +72,9 @@ const PackageForm: React.FC<PaquetesFormProps> = ({ afterSaveOrUpdate, selectedP
         <form onSubmit={(values) => operation(afterSaveOrUpdate)(values)}>
             <div className="mb-4">
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">Tipo de Servicio</label>
-                <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                name="tipoItem" 
-                value={packageData.tipoItem} onChange={handleChange}>
+                <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    name="tipoItem"
+                    value={packageData.tipoItem} onChange={handleChange}>
                     {Object.values(TiposPaquetes).map((tipo) => (
                         <option key={tipo} value={tipo}>
                             {tipo}
@@ -96,7 +96,7 @@ const PackageForm: React.FC<PaquetesFormProps> = ({ afterSaveOrUpdate, selectedP
             <div className="mb-4">
                 <label htmlFor="from_client" className="block text-sm font-medium text-gray-700">Cliente Origen</label>
                 <ClientModal name="from_client" value={packageData.from_client} onChange={handleChange} />
-                <Combobox items={clients} sustantivo='Cliente Origen' onSelect={handleChange}/>
+                {/* <Combobox items={clients} sustantivo='Cliente Origen' onSelect={handleChange} /> */}
             </div>
             <div className="mb-4">
                 <label htmlFor="destination_country_id" className="block text-sm font-medium text-gray-700">Destino</label>

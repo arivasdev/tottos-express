@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/supabaseClient';
 import { useToast } from '@/components/ui/use-toast';
-import { useUserStore } from '@/store/user.store';
 
 interface MaletaProps {
   onMaletaAdded: () => void;
@@ -18,8 +17,6 @@ const MaletaForm: React.FC<MaletaProps> = ({ onMaletaAdded, onClose }) => {
   const [descripcion, setDescripcion] = useState('');
 
   const [currentUserId, setCurrentUserId] = useState('');
-
-  const { user } = useUserStore();
 
   const { toast } = useToast()
 

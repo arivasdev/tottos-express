@@ -7,9 +7,15 @@ import React, { useEffect, useState } from 'react';
 import MaletaForm from './MaletaForm';
 import EditMaletaModal from './EditMaletaModal';
 import { Button } from '@/components/ui/Button';
-import { ArrowUpDown, Badge, MoreHorizontal } from 'lucide-react';
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { Link } from 'react-router-dom';
+
+interface SupabaseResponse<T> {
+    data?: T[] | null;
+    error: any | null;
+}
+
 
 const MaletasList: React.FC = () => {
 
@@ -123,7 +129,7 @@ const MaletasList: React.FC = () => {
     }, []);
 
     const fetchMaletas = async () => {
-        const { data, error } = await supabase.from<Maleta>('Maletas').select('*').order('name', { ascending: true });
+        const { data, error } : SupabaseResponse<Maleta> = await supabase.from('Maletas').select('*').order('name', { ascending: true });
         if (error) {
             console.error('Error fetching maletas:', error);
         } else {

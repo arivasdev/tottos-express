@@ -1,22 +1,29 @@
 import React, { useState } from 'react';
 import { supabase } from '../../supabaseClient';
+import Category from '@/interfaces/category';
 
 interface CategoryFormProps {
   onClose: () => void;
   setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
 }
 
+interface SupabaseResponse<T> {
+    data?: T[] | null;
+    error: any | null;
+}
+
+
 const CategoryForm: React.FC<CategoryFormProps> = ({ onClose, setCategories }) => {
   const [categoryName, setCategoryName] = useState('');
 
   const addCategory = async () => {
     if (categoryName.trim()) {
-      const { data, error } = await supabase.from('Categories').insert([{ name: categoryName }]);
+      const { error } = await supabase.from('Categories').insert([{ name: categoryName }]);
       if (error) {
         console.error('Error adding category:', error);
       } else {
         setCategoryName('');
-        const { data: updatedCategories, error: fetchError } = await supabase.from<Category>('Categories').select('*');
+        const { data: updatedCategories, error: fetchError } :SupabaseResponse<Category> = await supabase.from('Categories').select('*');
         if (fetchError) {
           console.error('Error fetching categories:', fetchError);
         } else {

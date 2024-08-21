@@ -3,13 +3,17 @@ import { supabase } from '@/supabaseClient';
 import { useToast } from "@/components/ui/use-toast"
 import DeliveryRoute from '@/interfaces/deliveryRoute';
 import Country from '@/interfaces/country';
-import { add } from 'date-fns';
 import Address from '@/interfaces/address';
 
 
 interface Props {
   addressRecord: Address;
   onClose: () => void;
+}
+
+interface SupabaseResponse<T> {
+    data?: T[] | null;
+    error: any | null;
 }
 
 const EditAddressModal: React.FC<Props> = ({ addressRecord, onClose }) => {
@@ -25,7 +29,7 @@ const EditAddressModal: React.FC<Props> = ({ addressRecord, onClose }) => {
     fetchCountries();
   }, [])
   const fetchCountries = async () => {
-    const { data, error } = await supabase.from<Country>('Countries').select('*');
+    const { data, error } : SupabaseResponse<Country> = await supabase.from('Countries').select('*');
     if (error) {
       console.error('Error fetching Countries:', error);
     } else {
@@ -35,8 +39,8 @@ const EditAddressModal: React.FC<Props> = ({ addressRecord, onClose }) => {
   useEffect(() => {
     if (countryId) {
       const fetchRoutes = async () => {
-        const { data, error } = await supabase
-          .from<DeliveryRoute>('DeliveryRoutes')
+        const { data, error } : SupabaseResponse<DeliveryRoute> = await supabase
+          .from('DeliveryRoutes')
           .select('*')
           .eq('countryId', countryId);
 

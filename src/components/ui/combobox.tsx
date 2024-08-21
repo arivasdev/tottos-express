@@ -23,7 +23,7 @@ interface Item {
 }
 
 interface ComboProps {
-    items: Array<Item>;
+    items: Item[];
     idField?: string;
     labelField?: string;
     sustantivo?: string;
@@ -32,7 +32,7 @@ interface ComboProps {
     defaultValue?: string; // Propiedad opcional para react-hook-form
 }
 
-export function Combobox({ items, idField = "id", labelField = "name", sustantivo = "un elemento", onSelect, className = '', defaultValue }: ComboProps) {
+export function Combobox({ items, sustantivo = "un elemento", onSelect, className = '', defaultValue }: ComboProps) {
     const [open, setOpen] = React.useState(false);
     const [value, setValue] = React.useState(defaultValue);
 

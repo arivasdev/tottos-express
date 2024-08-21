@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { supabase } from '@/supabaseClient';
-import Client from '@/interfaces/client';
+import React from 'react';
+import { Client } from '@/interfaces/client';
 import { FaPhoneAlt, FaEnvelope, FaTruck } from 'react-icons/fa';
 
 
@@ -9,11 +8,7 @@ interface Props {
 }
 
 const ClientInfo: React.FC<Props> = ({ client }) => {
-    const [email, setEmail] = useState(client.email);
-    const [name, setName] = useState(client.name);
-    const [phoneNumber, setPhoneNumber] = useState(client.phone_number);
-    const [metodoPreferido, setMetodoPreferido] = useState<'Retiro en Sitio' | 'Domicilio'>(client.metodo_preferido);
-
+    const { name, email, phone_number: phoneNumber, metodo_preferido: metodoPreferido } = client;
 
     return (
         <div className="bg-white p-8 rounded shadow-md w-full max-w-2xl">

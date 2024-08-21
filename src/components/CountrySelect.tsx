@@ -8,6 +8,11 @@ interface CountrySelectProps {
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 }
 
+interface SupabaseResponse<T> {
+    data?: T[] | null;
+    error: any | null;
+}
+
 export const CountrySelect: React.FC<CountrySelectProps> = ({ name, value, onChange }) => {
 
     const [countries, setCountries] = useState<Country[]>([]);
@@ -17,7 +22,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({ name, value, onCha
     }, [])
 
     const fetchCountries = async () => {
-        const { data, error } = await supabase.from<Country>('Countries').select('*');
+        const { data, error } : SupabaseResponse<Country> = await supabase.from('Countries').select('*');
         if (error) {
             console.error('Error fetching Countries:', error);
         } else {

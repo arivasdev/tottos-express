@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom';
 
 type ViajerosTableProps<T> = {
     data: T[];
-    handleEditClick: (viajero: T | null) => void;
 }
 
 
