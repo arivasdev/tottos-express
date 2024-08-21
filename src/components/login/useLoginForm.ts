@@ -47,7 +47,6 @@ export function useLoginForm() {
             const { data, error } = await supabase.auth.signInWithPassword({
                 email, password
             })
-            console.log("data:", data)
 
             if (error?.message === LoginError.INVALID_GRANT) {
                 setError('email', {
@@ -62,14 +61,9 @@ export function useLoginForm() {
 
             if (data?.user?.id) {
                 getUserById(data.user.id).then((user) => {
-                    console.log("user:", user)
                     store.setUser(user);
                 })
             }
-
-            // console.log("id:", data?.user?.id);
-            // store.setUser(supabase.auth.user());
-
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
         }

@@ -104,7 +104,6 @@ const AddressForm: React.FC<Props> = ({ onAddressAdded, onClose, client }) => {
             clientid,
             addressid
           });
-          console.log("🚀 ~ addAddress ~ data:", data)
       
           if (error) {
             console.error('Error setting default address:', error);

@@ -160,12 +160,10 @@ const Addresses: React.FC<props> = ({client}) => {
             clientid: clientId,
             addressid
           });
-          console.log("🚀 ~ addAddress ~ data:", data)
       
           if (error) {
             console.error('Error setting default address:', error);
           } else {
-            console.log('Default address updated successfully:', data);
           }
 
         fetchAddresss();

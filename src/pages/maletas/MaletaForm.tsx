@@ -24,7 +24,6 @@ const MaletaForm: React.FC<MaletaProps> = ({ onMaletaAdded, onClose }) => {
   const { toast } = useToast()
 
   useEffect(() => {
-    console.log("Store user, ", user)
     getSession()
   }, [])
 
@@ -41,7 +40,6 @@ const MaletaForm: React.FC<MaletaProps> = ({ onMaletaAdded, onClose }) => {
     const { data } = await supabase.from("Users").select("id").eq("user_UID", userGuid);
     if (data) {
       setCurrentUserId(data[0].id);
-      console.log("Current user, ", data[0].id)
     }
   }
   const addMaleta = async () => {

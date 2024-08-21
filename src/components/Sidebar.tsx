@@ -4,9 +4,11 @@ import { supabase } from '@/supabaseClient';
 import { FaUserCog, FaChevronDown, FaChevronRight, FaTruck, FaSuitcaseRolling } from 'react-icons/fa';
 import { BiCategory } from 'react-icons/bi';
 import { MdCardTravel } from "react-icons/md";
+import { useUserStore } from '@/store/user.store';
 
 const Sidebar: React.FC = () => {
     const [configOpen, setConfigOpen] = useState(false);
+    const store = useUserStore();
 
 
 
@@ -51,7 +53,10 @@ const Sidebar: React.FC = () => {
                 </ul>
             </nav>
             <div className="p-4 hover:bg-gray-700">
-                <button onClick={() => supabase.auth.signOut()}>Cerrar Sesión</button>
+                <button onClick={() => {
+                    supabase.auth.signOut()
+                    store.resetUser()
+                }}>Cerrar Sesión</button>
             </div>
         </div>
     );

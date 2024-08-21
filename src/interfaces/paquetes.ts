@@ -1,4 +1,5 @@
 import { MetodosEntrega, TiposPaquetes } from "@/types/DBEnum.type";
+import { ColumnDef as OriginalColumnDef } from '@tanstack/react-table';
 
 export interface Paquete {
     id: bigint;
@@ -24,11 +25,30 @@ export interface Paquete {
     created_by?: number;
     pagadoPorAdelantado?: boolean;
     //campos para visualizacion
-    Origen?: string;
-    Destino?: string;
-    ClienteOrigen?: string;
-    ClienteDestino?: string;
-    Responsable?: string;
+    Origen?: {
+      name: string;
+    }
+    Destino?: {
+      name: string;
+    }
+    ClienteOrigen?: {
+      name: string;
+    }
+    ClienteDestino?: {
+      name: string;
+    }
+    Responsable?: {
+      name: string;
+    }
+    DireccionEntregaItem?: {
+      route_id: bigint;
+      address: string;
+    }
+
+    DeliveryRoute ?: {
+      id: any;
+      name: string;
+    }
   }
 
   interface ValidationMessage {
@@ -37,3 +57,15 @@ export interface Paquete {
   }
   
   export type ValidationError = Partial<Record<keyof Paquete, ValidationMessage>>;
+
+  // Extendemos ColumnDef para ajustar el tipo de accessorKey
+export interface ColumnDef<TData> extends Omit<OriginalColumnDef<TData>, 'accessorKey'> {
+    accessorKey: keyof TData;
+}
+
+// Extendemos ColumnDef para agregar el id 'actions'
+export interface ActionColumnDef<TData> extends Omit<OriginalColumnDef<TData>, 'accessorKey'> {
+    id: 'actions';
+}
+
+export type PaqueteColumns = (ColumnDef<Paquete> | ActionColumnDef<Paquete>)[];

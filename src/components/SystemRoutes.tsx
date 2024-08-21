@@ -8,7 +8,9 @@ import Clients from '@/pages/clients/Clients';
 import AddressPage from '@/pages/addresses/AddressPage';
 import MaletasPage from '@/pages/maletas/MaletasPage';
 import ViajerosPage from '@/pages/viajeros/ViajerosPage';
-import PackageForm from '@/pages/paquetes/PackageForm';
+import PaquetesPage from '@/pages/paquetes/PaquetesPage';
+import AddPaquete from '@/pages/paquetes/AddPaquete';
+import EditPaquete from '@/pages/paquetes/EditPaquete';
 
 export default function SystemRoutes() {
     return (
@@ -22,7 +24,13 @@ export default function SystemRoutes() {
             <Route path="/addresses/:id" element={<AddressPage />} />
             <Route path="/settings/maletas" element={<MaletasPage />} />
             <Route path="/settings/viajeros" element={<ViajerosPage />} />
-            <Route path="/packages" element={<PackageForm />} />
+
+            
+            <Route path="/packages" element={<PaquetesPage />} />
+            <Route path="/packages/edit/:id" element={<EditPaquete />} />
+            <Route path="/packages/add" element={<AddPaquete />} />
+
+
         </Routes>
     )
 }
